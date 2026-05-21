@@ -1332,6 +1332,235 @@ body::before { display: none !important; }
   margin-left: 4px;
 }
 
+/* ============================================
+   🔑 PANEL ADMIN · Drawer + badge header
+   ============================================ */
+.admin-badge-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, #B45309, #92400E);
+  color: #FEF3C7;
+  border: 1px solid #92400E;
+  padding: 6px 12px 6px 10px;
+  border-radius: 999px;
+  font-size: 11px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.12s, filter 0.18s, box-shadow 0.18s;
+  box-shadow: 0 4px 12px rgba(180, 83, 9, 0.35);
+}
+.admin-badge-btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(180, 83, 9, 0.45); }
+.admin-badge-btn:active { transform: translateY(0); }
+.admin-badge-ico { font-size: 14px; }
+.admin-badge-label { font-weight: 800; }
+
+.admin-drawer { width: 100%; max-width: 460px; }
+.admin-header {
+  background: linear-gradient(135deg, color-mix(in srgb, #B45309 22%, var(--surface)), var(--surface)) !important;
+  border-bottom: 2px solid #B45309 !important;
+}
+.admin-header .alerts-title { color: #B45309; font-weight: 800; }
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.admin-stat {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 8px;
+  text-align: center;
+}
+.admin-stat-n {
+  font-size: 22px; font-weight: 800;
+  color: #B45309;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.admin-stat-l {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-3); margin-top: 4px;
+}
+
+.admin-section { margin-bottom: 18px; }
+.admin-section-title {
+  font-size: 11px; font-weight: 800;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-3);
+  margin: 0 0 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.admin-section-count {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  color: var(--primary);
+  font-size: 10px; padding: 2px 7px;
+  border-radius: 999px;
+  margin-left: auto;
+  letter-spacing: 0.04em;
+}
+
+.admin-action {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 36px 1fr 18px;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s, transform 0.1s;
+}
+.admin-action:hover { border-color: color-mix(in srgb, var(--accent, var(--primary)) 45%, transparent); background: var(--surface-2); }
+.admin-action:active { transform: translateY(1px); }
+.admin-action-ico {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 17px;
+}
+.admin-action-text { min-width: 0; }
+.admin-action-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.admin-action-sub { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+.admin-action-chev { color: var(--text-3); font-size: 18px; text-align: right; }
+
+.admin-list {
+  max-height: 280px;
+  overflow-y: auto;
+  margin-top: 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+.admin-list-row {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  align-items: center;
+}
+.admin-list-row:last-child { border-bottom: none; }
+.admin-list-row:hover { background: color-mix(in srgb, var(--primary) 6%, transparent); }
+.admin-list-mat {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.06em;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  padding: 3px 7px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 11px;
+}
+.admin-list-name {
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.admin-list-empty {
+  text-align: center;
+  padding: 24px 12px;
+  color: var(--text-3);
+  font-size: 12px;
+}
+#admin-filter { margin-top: 6px; }
+
+/* Pill admin (header) — color distintivo */
+.user-pill.user-pill-admin {
+  background: linear-gradient(135deg, color-mix(in srgb, #B45309 22%, transparent), color-mix(in srgb, #B45309 12%, transparent));
+  border-color: #B45309;
+  color: #FEF3C7;
+}
+.user-pill.user-pill-admin .user-pill-text { color: #FEF3C7; letter-spacing: 0.12em; }
+.user-pill.user-pill-admin .user-pill-logout { background: rgba(255, 255, 255, 0.15); color: #FEF3C7; }
+.user-pill.user-pill-admin .user-pill-logout:hover { background: #FEF3C7; color: #B45309; }
+
+.ft-author-base {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 7px;
+  background: color-mix(in srgb, var(--primary) 18%, transparent);
+  color: var(--primary);
+  border-radius: 4px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+}
+
+/* 🗂 Gestor de bases publicadas (admin) */
+.cmp-admin-bases-mgr {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+}
+.cmp-admin-bases-head {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+.cmp-admin-bases-list {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.cmp-admin-bases-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.cmp-admin-bases-row .b-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cmp-admin-bases-row .b-name {
+  font-weight: 800; font-size: 13px; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.cmp-admin-bases-row .b-pin {
+  background: color-mix(in srgb, var(--primary) 16%, transparent);
+  color: var(--primary);
+  font-size: 10px; padding: 2px 8px;
+  border-radius: 999px; letter-spacing: 0.06em;
+}
+.cmp-admin-bases-row .b-meta {
+  font-size: 11px; color: var(--text-3);
+}
+.cmp-admin-bases-row .btn-delete-base {
+  background: color-mix(in srgb, var(--status-err, #B91C1C) 12%, transparent);
+  color: var(--status-err, #B91C1C);
+  border: 1px solid color-mix(in srgb, var(--status-err, #B91C1C) 28%, transparent);
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.cmp-admin-bases-row .btn-delete-base:hover {
+  background: var(--status-err, #B91C1C);
+  color: #fff;
+}
+.cmp-admin-bases-empty {
+  text-align: center;
+  padding: 14px;
+  color: var(--text-3);
+  font-size: 12px;
+  font-style: italic;
+}
+
 </style>
 </head>
 <body>
@@ -1360,11 +1589,10 @@ body::before { display: none !important; }
       <input id="login-matricula"
              class="screen-login-input"
              type="text"
-             inputmode="numeric"
-             pattern="\d{7}"
              maxlength="7"
              placeholder="0000000"
              autocomplete="off"
+             autocapitalize="characters"
              data-testid="login-matricula-input"/>
       <div id="login-error" class="screen-login-error" data-testid="login-error" style="display:none">⚠ Introduce una matrícula válida de 7 dígitos.</div>
       <button type="submit" id="login-submit" class="screen-login-btn" data-testid="login-submit-btn">Entrar →</button>
@@ -1372,7 +1600,7 @@ body::before { display: none !important; }
 
     <div class="screen-login-divider"><span>o</span></div>
 
-    <button type="button" id="login-load-pdf" class="screen-login-secondary" data-testid="login-load-pdf-btn">
+    <button type="button" id="login-load-pdf" class="screen-login-secondary" data-admin-only="1" data-testid="login-load-pdf-btn">
       <span class="login-sec-ico">📥</span>
       <span class="login-sec-text">
         <span class="login-sec-title">Cargar PDF de plantilla</span>
@@ -1391,7 +1619,7 @@ body::before { display: none !important; }
   </div>
 
   <div class="screen-login-author" data-testid="login-author">
-    Desarrollado profesionalmente por <span>Jose Alejandro Alvarado</span>
+    Desarrollado por <span>Jose Alejandro Alvarado</span> · <span>Base BCN</span>
   </div>
 </div>
 
@@ -1423,6 +1651,10 @@ body::before { display: none !important; }
       </div>
     </div>
     <div class="flex items-center gap-2 no-print">
+      <button id="btn-admin-panel" class="btn-icon admin-badge-btn" title="Panel admin" data-testid="btn-admin-panel" style="display:none">
+        <span class="admin-badge-ico">🔑</span>
+        <span class="admin-badge-label">Admin</span>
+      </button>
       <span id="user-pill" class="user-pill" data-testid="user-pill" style="display:none">
         <span class="user-pill-ico">🪪</span>
         <span class="user-pill-text" id="user-pill-text">—</span>
@@ -1566,11 +1798,11 @@ body::before { display: none !important; }
     </div>
 
     <div class="ft-meta" data-testid="footer-meta">
-      TripulanteFlow AV <span class="ft-dot"></span> v3.0 <span class="ft-dot"></span> Hecho sin fines de lucro
+      TripulanteFlow AV <span class="ft-dot"></span> v3.0 <span class="ft-dot"></span> Hecho con pasión ferroviaria
     </div>
 
     <div class="ft-author" data-testid="footer-author">
-      Desarrollado por <span class="ft-author-name">Jose Alejandro Alvarado</span>
+      Desarrollado por <span class="ft-author-name">Jose Alejandro Alvarado</span> <span class="ft-author-base">Base BCN</span>
     </div>
   </footer>
 <!-- 🎓 ONBOARDING TOUR (spotlight) -->
@@ -1664,6 +1896,41 @@ body::before { display: none !important; }
             <div><label class="text-sm block mb-1" style="color:var(--text-2)">🌍 Plus Internacionalidad</label><input id="set-pInt" type="number" step="0.01" min="0" class="input"/></div>
             <div class="mt-2"><label class="text-sm block mb-1" style="color:var(--text-2)">⚡ Plus Activación</label><input id="set-pAct" type="number" step="0.01" min="0" class="input"/></div>
             <div class="mt-2"><label class="text-sm block mb-1" style="color:var(--text-2)">🚄 Plus JT</label><input id="set-pJT" type="number" step="0.01" min="0" class="input"/></div>
+          </div>
+
+          <!-- ➕ PLUSES PERSONALIZADOS (estética idéntica a los predeterminados) -->
+          <div class="border-t pt-3 mt-3" style="border-color:var(--border)">
+            <div class="flex items-center justify-between mb-2">
+              <p class="label" style="margin:0">➕ Pluses personalizados</p>
+              <span class="text-xs" style="color:var(--text-3)" id="cp-count-label">0 añadidos</span>
+            </div>
+            <p class="text-xs" style="color:var(--text-3); margin-bottom:10px; line-height:1.5">Añade pluses propios (peligrosidad, especial, etc.). Se aplican automáticamente al cobro como el resto.</p>
+
+            <!-- Lista de pluses ya guardados (mismo estilo que Internacionalidad/Activación/JT) -->
+            <div id="custom-pluses-list" class="space-y-2" data-testid="custom-pluses-list"></div>
+
+            <!-- Formulario para añadir uno nuevo -->
+            <div class="custom-plus-add mt-3" style="background: var(--surface-2); border: 1px dashed var(--border); border-radius: 12px; padding: 12px;">
+              <p class="text-xs" style="color:var(--text-3); margin-bottom:8px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase">Añadir nuevo plus</p>
+              <div style="display:grid; grid-template-columns: 1fr 110px 110px auto; gap:8px; align-items:end">
+                <div>
+                  <label class="text-xs" style="color:var(--text-3); display:block; margin-bottom:3px">Nombre</label>
+                  <input class="input" id="cp-name" placeholder="Plus peligrosidad" data-testid="cp-name"/>
+                </div>
+                <div>
+                  <label class="text-xs" style="color:var(--text-3); display:block; margin-bottom:3px">Importe €</label>
+                  <input class="input" id="cp-amount" type="text" inputmode="decimal" placeholder="0.00" data-testid="cp-amount"/>
+                </div>
+                <div>
+                  <label class="text-xs" style="color:var(--text-3); display:block; margin-bottom:3px">Modo</label>
+                  <select class="input" id="cp-mode" data-testid="cp-mode" style="cursor:pointer">
+                    <option value="perShift">Por turno</option>
+                    <option value="perHour">Por hora</option>
+                  </select>
+                </div>
+                <button type="button" class="btn-primary" id="cp-add" data-instant-save="1" data-testid="cp-add" style="padding:11px 14px; min-width:48px">➕</button>
+              </div>
+            </div>
           </div>
         </div></div>
       </div>
@@ -1796,31 +2063,6 @@ body::before { display: none !important; }
           <p class="label mt-4">🪪 Mi matrícula (para identificar tu fila en el cuadrante general)</p>
           <input class="input" id="set-myMatricula" placeholder="Ej. 4030351 (7 dígitos)" inputmode="numeric" pattern="\d{7}" maxlength="7" autocomplete="off" data-testid="set-my-matricula"/>
           <p class="text-xs" style="color:var(--text-3); margin-top:4px">Cuando aparezca tu matrícula al subir el cuadrante, la ficha quedará destacada con tu botón "🚄 Cargar a mi Calendario".</p>
-
-          <!-- 💰 PLUSES PERSONALIZADOS -->
-          <div class="mt-5 pt-4" style="border-top:1px dashed var(--border)">
-            <h3 class="text-sm" style="font-weight:700; margin-bottom:8px">💰 Pluses personalizados</h3>
-            <p class="text-xs" style="color:var(--text-3); margin-bottom:10px">Crea pluses propios (ej. plus especial, peligrosidad...). Se aplicarán automáticamente al cobro.</p>
-            <div id="custom-pluses-list" class="space-y-2"></div>
-            <div class="custom-plus-add mt-3" style="display:grid; grid-template-columns: 1fr 110px 100px auto; gap:8px; align-items:end">
-              <div>
-                <label class="text-xs" style="color:var(--text-3); display:block; margin-bottom:3px">Nombre del plus</label>
-                <input class="input" id="cp-name" placeholder="Plus peligrosidad" data-testid="cp-name"/>
-              </div>
-              <div>
-                <label class="text-xs" style="color:var(--text-3); display:block; margin-bottom:3px">Importe €</label>
-                <input class="input" id="cp-amount" type="text" inputmode="decimal" placeholder="0.00" data-testid="cp-amount"/>
-              </div>
-              <div>
-                <label class="text-xs" style="color:var(--text-3); display:block; margin-bottom:3px">Modo</label>
-                <select class="input" id="cp-mode" data-testid="cp-mode" style="cursor:pointer">
-                  <option value="perShift">Por turno</option>
-                  <option value="perHour">Por hora</option>
-                </select>
-              </div>
-              <button type="button" class="btn-primary" id="cp-add" data-instant-save="1" data-testid="cp-add" style="padding:11px 16px">➕</button>
-            </div>
-          </div>
         </div></div>
       </div>
     </div>
@@ -1932,7 +2174,7 @@ body::before { display: none !important; }
 
     <!-- TABS -->
     <div class="cmp-tabs">
-      <button class="cmp-tab active" data-cmptab="upload" data-testid="cmp-tab-upload">📤 Subir</button>
+      <button class="cmp-tab active" data-cmptab="upload" data-admin-only="1" data-testid="cmp-tab-upload">📤 Subir</button>
       <button class="cmp-tab" data-cmptab="search" data-testid="cmp-tab-search">🔍 Buscar</button>
       <button class="cmp-tab" data-cmptab="day" data-testid="cmp-tab-day">📅 Por día</button>
     </div>
@@ -1975,15 +2217,41 @@ body::before { display: none !important; }
         </div>
         <div class="cmp-cloud-row">
           <button class="btn-soft cmp-cloud-btn" id="cmp-cloud-pull" data-testid="cmp-cloud-pull">⬇️ Sincronizar desde la nube</button>
-          <button class="btn-soft cmp-cloud-btn cmp-cloud-admin-toggle" id="cmp-cloud-admin-toggle" data-testid="cmp-cloud-admin-toggle">🔑 Modo Admin</button>
+          <button class="btn-soft cmp-cloud-btn cmp-cloud-admin-toggle" id="cmp-cloud-admin-toggle" data-admin-only="1" data-testid="cmp-cloud-admin-toggle">🔑 Modo Admin</button>
         </div>
-        <div class="cmp-admin-panel" id="cmp-admin-panel" style="display:none">
-          <p class="cmp-admin-hint">Introduce tu PIN para publicar el cuadrante actual a todos los compañeros.</p>
+        <div class="cmp-admin-panel" id="cmp-admin-panel" data-admin-only="1" style="display:none">
+          <p class="cmp-admin-hint">Selecciona la <b>base</b>, introduce tu PIN y publica el cuadrante. Cada base se guarda <b>aislada</b> en la nube — Madrid no afecta a Barcelona.</p>
+          <div class="cmp-admin-row" style="margin-bottom:8px">
+            <label class="text-xs" style="color:var(--text-3); font-weight:700; letter-spacing:0.06em; text-transform:uppercase; min-width:60px">📍 Base</label>
+            <select id="cmp-admin-base" class="input cmp-admin-base-select" data-testid="cmp-admin-base" style="cursor:pointer; flex:1">
+              <option value="">— Selecciona la base —</option>
+              <option value="Madrid">Madrid</option>
+              <option value="Barcelona">Barcelona</option>
+              <option value="Sevilla">Sevilla</option>
+              <option value="Málaga">Málaga</option>
+              <option value="Valencia">Valencia</option>
+              <option value="Bilbao">Bilbao</option>
+              <option value="Zaragoza">Zaragoza</option>
+              <option value="A Coruña">A Coruña</option>
+              <option value="Granada">Granada</option>
+            </select>
+          </div>
           <div class="cmp-admin-row">
             <input id="cmp-admin-pin" class="input cmp-admin-pin-input" type="password" placeholder="PIN admin" autocomplete="off" data-testid="cmp-admin-pin"/>
             <button class="btn-primary cmp-admin-publish" id="cmp-admin-publish" data-testid="cmp-admin-publish">🚀 Publicar a la nube</button>
           </div>
           <div class="cmp-admin-feedback" id="cmp-admin-feedback"></div>
+
+          <!-- 🗂 Gestión por base (eliminar / reemplazar individualmente) -->
+          <div class="cmp-admin-bases-mgr">
+            <div class="cmp-admin-bases-head">
+              <span>🗂 Bases publicadas</span>
+              <button type="button" class="btn-soft" id="cmp-admin-refresh-bases" data-testid="cmp-admin-refresh-bases">🔄 Refrescar</button>
+            </div>
+            <div id="cmp-admin-bases-list" class="cmp-admin-bases-list" data-testid="cmp-admin-bases-list">
+              <div class="cmp-admin-bases-empty">Cargando bases publicadas…</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2227,6 +2495,75 @@ body::before { display: none !important; }
     <div style="padding:14px 24px 22px; display:grid; grid-template-columns: 1fr 1.5fr; gap:12px; border-top:1px solid var(--border)">
       <button class="btn-soft" data-close="modal-view-shift" data-testid="view-shift-cancel" style="padding:14px; font-size:14px; font-weight:700">✖ Cerrar</button>
       <button class="btn-primary" id="view-shift-edit" data-testid="view-shift-edit" style="padding:14px; font-size:14px; font-weight:700">✏️ Modificar / 🔁 Cambio Compi</button>
+    </div>
+  </div>
+</div>
+
+<!-- 🔑 Panel Admin (drawer lateral · solo si matrícula = ADMIN) -->
+<div id="modal-admin" class="modal modal-drawer" data-modal data-testid="modal-admin" style="z-index:10070">
+  <div class="alerts-drawer admin-drawer" data-testid="admin-drawer">
+    <div class="alerts-header admin-header">
+      <div>
+        <div class="alerts-title">🔑 Panel Admin</div>
+        <div class="alerts-subtitle" id="admin-subtitle">Gestión del cuadrante general</div>
+      </div>
+      <button class="btn-icon" data-close="modal-admin" data-testid="admin-close">×</button>
+    </div>
+
+    <div class="alerts-list" id="admin-body">
+      <div class="admin-stats">
+        <div class="admin-stat">
+          <div class="admin-stat-n" id="admin-stat-matriculas">—</div>
+          <div class="admin-stat-l">Matrículas</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-n" id="admin-stat-month">—</div>
+          <div class="admin-stat-l">Mes</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-n" id="admin-stat-sync">—</div>
+          <div class="admin-stat-l">Sincronizado</div>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3 class="admin-section-title">🚀 Acciones rápidas</h3>
+        <button class="admin-action" id="admin-open-upload" data-testid="admin-open-upload">
+          <span class="admin-action-ico" style="background:color-mix(in srgb, var(--accent, var(--primary)) 16%, transparent); color:var(--accent, var(--primary))">📥</span>
+          <div class="admin-action-text">
+            <div class="admin-action-title">Cargar / Publicar Horario General</div>
+            <div class="admin-action-sub">Sube un nuevo cuadrante y publícalo a la nube</div>
+          </div>
+          <span class="admin-action-chev">›</span>
+        </button>
+        <button class="admin-action" id="admin-open-search" data-testid="admin-open-search">
+          <span class="admin-action-ico" style="background:color-mix(in srgb, var(--teal, #14B8A6) 16%, transparent); color:var(--teal, #14B8A6)">🔍</span>
+          <div class="admin-action-text">
+            <div class="admin-action-title">Buscar matrícula registrada</div>
+            <div class="admin-action-sub">Localiza la ficha de cualquier tripulante</div>
+          </div>
+          <span class="admin-action-chev">›</span>
+        </button>
+        <button class="admin-action" id="admin-clear-local" data-testid="admin-clear-local">
+          <span class="admin-action-ico" style="background:color-mix(in srgb, var(--status-err, #B91C1C) 16%, transparent); color:var(--status-err, #B91C1C)">🗑️</span>
+          <div class="admin-action-text">
+            <div class="admin-action-title">Vaciar plantilla local</div>
+            <div class="admin-action-sub">Borra los compañeros guardados en este dispositivo</div>
+          </div>
+          <span class="admin-action-chev">›</span>
+        </button>
+      </div>
+
+      <div class="admin-section">
+        <h3 class="admin-section-title">📋 Matrículas registradas <span class="admin-section-count" id="admin-list-count">0</span></h3>
+        <input id="admin-filter" class="input" placeholder="Filtrar por nombre o matrícula…" autocomplete="off" data-testid="admin-filter"/>
+        <div id="admin-list" class="admin-list" data-testid="admin-list"></div>
+      </div>
+    </div>
+
+    <div class="alerts-footer">
+      <button class="btn-soft" data-close="modal-admin" data-testid="admin-dismiss">Cerrar</button>
+      <button class="btn-accent btn-clear" id="admin-logout" data-testid="admin-logout">⎋ Cerrar sesión admin</button>
     </div>
   </div>
 </div>
@@ -5464,27 +5801,70 @@ function renderCustomPlusesList() {
   const list = document.getElementById("custom-pluses-list");
   if (!list) return;
   const items = settings.customPluses || [];
+  // Actualizar contador
+  const countEl = document.getElementById("cp-count-label");
+  if (countEl) countEl.textContent = `${items.length} añadido${items.length === 1 ? '' : 's'}`;
+
   if (!items.length) {
-    list.innerHTML = `<div class="text-xs" style="color:var(--text-3); padding:8px 0">Sin pluses personalizados. Añade uno abajo.</div>`;
+    list.innerHTML = `<div class="text-xs" style="color:var(--text-3); padding:6px 0; text-align:center; font-style:italic">Sin pluses personalizados. Usa el formulario de abajo para añadir el primero.</div>`;
     return;
   }
-  list.innerHTML = items.map(p => `
-    <div class="custom-plus-row" style="display:flex; gap:10px; align-items:center; padding:10px 12px; background:var(--surface); border:1px solid var(--border); border-radius:10px">
-      <span style="font-size:18px">💰</span>
-      <div style="flex:1; min-width:0">
-        <div style="font-weight:700; font-size:13px; color:var(--text)">${escape(p.name)}</div>
-        <div style="font-size:11px; color:var(--text-3); font-family:'JetBrains Mono', monospace">${p.amount.toFixed(2)}€ · ${p.mode === 'perShift' ? 'por turno' : 'por hora'}</div>
+  // Render con la MISMA estética que Internacionalidad/Activación/JT (label + input + delete inline)
+  list.innerHTML = items.map(p => {
+    const modeLabel = p.mode === 'perShift' ? 'por turno' : 'por hora';
+    return `
+    <div class="custom-plus-row" data-cp-id="${escape(p.id)}" style="margin-top: 2px">
+      <label class="text-sm block mb-1" style="color:var(--text-2); display:flex; align-items:center; gap:6px">
+        <span>💎</span>
+        <span style="flex:1">${escape(p.name)}</span>
+        <span style="font-size:10px; color:var(--text-3); font-weight:500; letter-spacing:0.04em; text-transform:uppercase">${modeLabel}</span>
+      </label>
+      <div style="display:flex; gap:6px; align-items:center">
+        <input class="input" type="number" step="0.01" min="0" value="${p.amount.toFixed(2)}" data-cp-amount="${escape(p.id)}" data-testid="cp-amount-${escape(p.id)}" style="flex:1"/>
+        <button type="button" class="btn-icon" data-cp-del="${escape(p.id)}" data-testid="cp-del-${escape(p.id)}" title="Eliminar plus" aria-label="Eliminar plus" style="width:42px; height:42px; color:var(--status-err, #B91C1C); font-size:16px">🗑</button>
       </div>
-      <button type="button" class="btn-soft" data-cp-del="${escape(p.id)}" style="font-size:11px; padding:5px 10px">🗑</button>
-    </div>`).join("");
+    </div>`;
+  }).join("");
+
+  // Eliminar
   list.querySelectorAll("[data-cp-del]").forEach(b => {
     b.onclick = () => {
-      settings.customPluses = (settings.customPluses || []).filter(x => x.id !== b.dataset.cpDel);
-      saveStore();
-      renderCustomPlusesList();
-      try { recomputeAllShiftsIncome(); render(); } catch(_) {}
-      showToast("Plus eliminado", "success");
+      const id = b.dataset.cpDel;
+      const item = (settings.customPluses || []).find(x => x.id === id);
+      const name = item?.name || "este plus";
+      showConfirm({
+        title: "Eliminar plus personalizado",
+        message: `¿Eliminar el plus "${name}"? Esta acción no afecta a los turnos ya guardados, pero el plus dejará de aplicarse a futuros cálculos.`,
+        icon: "🗑️", danger: true, confirmText: "Eliminar",
+        onConfirm: () => {
+          settings.customPluses = (settings.customPluses || []).filter(x => x.id !== id);
+          saveStore();
+          renderCustomPlusesList();
+          try { recomputeAllShiftsIncome(); render(); } catch(_) {}
+          showToast(`Plus "${name}" eliminado`, "success");
+        }
+      });
     };
+  });
+
+  // Editar importe en vivo (input editable)
+  list.querySelectorAll("[data-cp-amount]").forEach(inp => {
+    inp.addEventListener("change", () => {
+      const id = inp.dataset.cpAmount;
+      const v = parseFloat(inp.value || "0");
+      if (isNaN(v) || v < 0) {
+        showToast("Importe no válido", "error");
+        renderCustomPlusesList();
+        return;
+      }
+      const item = (settings.customPluses || []).find(x => x.id === id);
+      if (item) {
+        item.amount = v;
+        saveStore();
+        try { recomputeAllShiftsIncome(); render(); } catch(_) {}
+        showToast("Importe actualizado", "success");
+      }
+    });
   });
 }
 function addCustomPlus() {
@@ -6012,11 +6392,26 @@ function cmpRefreshDay() {
 }
 
 // ============================================================================
-// ☁️ CLOUD SYNC (cuadrante general · admin/PIN)
+// ☁️ CLOUD SYNC (cuadrante general · admin/PIN) · multi-base aislada
 // ============================================================================
-async function cmpCloudInfo() {
+// Bases soportadas en frontend (sincronizado con backend SUPPORTED_BASES)
+const TF_BASES = ["Madrid", "Barcelona", "Sevilla", "Málaga", "Valencia", "Bilbao", "Zaragoza", "A Coruña", "Granada"];
+
+function tfGetActiveBase() {
+  // Prioridad: base detectada por matrícula > base elegida manualmente > primera ciudad de baseStation
+  if (settings.userBase) return settings.userBase;
+  if (settings.cloudBase) return settings.cloudBase;
+  const station = settings.baseStation || "";
+  for (const b of TF_BASES) {
+    if (station.toLowerCase().includes(b.toLowerCase())) return b;
+  }
+  return "Madrid";
+}
+
+async function cmpCloudInfo(base) {
   try {
-    const r = await fetch(`${API}/cmp/info`);
+    const b = base || tfGetActiveBase();
+    const r = await fetch(`${API}/cmp/info?base=${encodeURIComponent(b)}`);
     if (!r.ok) throw new Error("no info");
     return await r.json();
   } catch (e) { return { available: false, _error: e.message }; }
@@ -6026,31 +6421,33 @@ async function cmpCloudRefreshStatus() {
   const status = document.getElementById("cmp-cloud-status");
   if (!status) return;
   status.classList.remove("ok","err");
-  status.textContent = "Comprobando…";
-  const info = await cmpCloudInfo();
+  const activeBase = tfGetActiveBase();
+  status.textContent = `Comprobando base ${activeBase}…`;
+  const info = await cmpCloudInfo(activeBase);
   if (info._error || info.available === undefined) {
     status.classList.add("err");
     status.textContent = "Sin conexión";
     return;
   }
   if (!info.available) {
-    status.textContent = "Sin cuadrante publicado";
+    status.textContent = `Sin cuadrante para ${activeBase}`;
     return;
   }
   status.classList.add("ok");
   const fecha = info.uploadedAt ? new Date(info.uploadedAt).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "?";
-  status.textContent = `${info.month || "?"} · ${info.colleagueCount || 0} compañeros · ${fecha}`;
+  status.textContent = `${info.base || activeBase} · ${info.month || "?"} · ${info.colleagueCount || 0} compañeros · ${fecha}`;
 }
 
 async function cmpCloudPull() {
   const btn = document.getElementById("cmp-cloud-pull");
   if (btn) { btn.disabled = true; btn.textContent = "⏳ Descargando…"; }
+  const activeBase = tfGetActiveBase();
   try {
-    const r = await fetch(`${API}/cmp/latest`);
-    if (r.status === 404) { showToast("No hay cuadrante publicado aún", "info"); return; }
+    const r = await fetch(`${API}/cmp/latest?base=${encodeURIComponent(activeBase)}`);
+    if (r.status === 404) { showToast(`No hay cuadrante publicado para ${activeBase}`, "info"); return; }
     if (!r.ok) throw new Error("HTTP " + r.status);
     const cuadrante = await r.json();
-    const incoming = (cuadrante.colleagues || []).map(c => ({ ...c, _cloud: true }));
+    const incoming = (cuadrante.colleagues || []).map(c => ({ ...c, _cloud: true, _base: cuadrante.base }));
     const byMat = new Map(cmpColleagues.filter(c => !c._cloud).map(c => [c.matricula, c]));
     for (const c of incoming) byMat.set(c.matricula, c);
     cmpColleagues = [...byMat.values()].sort((a,b) => a.name.localeCompare(b.name));
@@ -6058,7 +6455,8 @@ async function cmpCloudPull() {
     cmpUpdateCount();
     cmpRefreshSearch();
     cmpRefreshDay();
-    showToast(`☁️ ${incoming.length} compañeros sincronizados`, "success");
+    localStorage.setItem("tf_cloud_last_sync", new Date().toISOString());
+    showToast(`☁️ ${incoming.length} compañeros (base ${cuadrante.base}) sincronizados`, "success");
     cmpCloudRefreshStatus();
   } catch (e) {
     showToast("Error descargando del cloud: " + e.message, "error");
@@ -6071,15 +6469,19 @@ async function cmpCloudPublish() {
   const pinInput = document.getElementById("cmp-admin-pin");
   const fb = document.getElementById("cmp-admin-feedback");
   const btn = document.getElementById("cmp-admin-publish");
+  const baseSel = document.getElementById("cmp-admin-base");
   fb.className = "cmp-admin-feedback";
   if (!cmpColleagues.length) { fb.textContent = "Primero carga un PDF y guarda compañeros."; fb.classList.add("err"); return; }
   const pin = (pinInput.value || "").trim();
   if (!pin) { fb.textContent = "Introduce el PIN admin."; fb.classList.add("err"); return; }
+  const base = (baseSel?.value || "").trim();
+  if (!base) { fb.textContent = "Selecciona la BASE donde publicar el cuadrante."; fb.classList.add("err"); return; }
   btn.disabled = true;
   btn.textContent = "⏳ Publicando…";
-  fb.textContent = "Preparando " + cmpColleagues.length + " compañeros y tiras HD…";
+  fb.textContent = `Preparando ${cmpColleagues.length} compañeros para base ${base}…`;
   try {
     const payload = {
+      base,
       month: cmpColleagues[0]?.month || "",
       sourceFile: cmpColleagues[0]?.sourceFile || "",
       colleagues: []
@@ -6098,7 +6500,7 @@ async function cmpCloudPublish() {
         page: c.page || 0
       });
     }
-    fb.textContent = "Subiendo… (puede tardar 10-30s)";
+    fb.textContent = `Subiendo a base ${base}… (puede tardar 10-30s)`;
     const r = await fetch(`${API}/cmp/upload`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Admin-Pin": pin },
@@ -6108,8 +6510,8 @@ async function cmpCloudPublish() {
     if (!r.ok) { const t = await r.text(); throw new Error(t.slice(0, 120) || ("HTTP " + r.status)); }
     const j = await r.json();
     fb.classList.add("ok");
-    fb.textContent = `✅ Publicado: ${j.colleagueCount} compañeros · ${new Date(j.uploadedAt).toLocaleString("es-ES")}`;
-    showToast("☁️ Cuadrante publicado a la nube", "success");
+    fb.textContent = `✅ Base ${j.base}: ${j.colleagueCount} compañeros publicados · ${new Date(j.uploadedAt).toLocaleString("es-ES")}`;
+    showToast(`☁️ Cuadrante de ${j.base} publicado`, "success");
     cmpCloudRefreshStatus();
     pinInput.value = "";
   } catch (e) {
@@ -6125,10 +6527,101 @@ function cmpInitCloud() {
   document.getElementById("cmp-cloud-pull").onclick = cmpCloudPull;
   document.getElementById("cmp-cloud-admin-toggle").onclick = () => {
     const p = document.getElementById("cmp-admin-panel");
-    p.style.display = p.style.display === "none" ? "block" : "none";
+    const willOpen = p.style.display === "none";
+    p.style.display = willOpen ? "block" : "none";
+    // Pre-seleccionar la base activa al abrir el panel
+    if (willOpen) {
+      const sel = document.getElementById("cmp-admin-base");
+      const active = tfGetActiveBase();
+      if (sel && active && [...sel.options].some(o => o.value === active)) {
+        sel.value = active;
+      }
+      // Cargar la lista de bases publicadas
+      cmpAdminRefreshBases();
+    }
   };
   document.getElementById("cmp-admin-publish").onclick = cmpCloudPublish;
+  const refreshBtn = document.getElementById("cmp-admin-refresh-bases");
+  if (refreshBtn) refreshBtn.onclick = cmpAdminRefreshBases;
   cmpCloudRefreshStatus();
+}
+
+// 🗂 Lista de bases publicadas con info y botón eliminar (admin)
+async function cmpAdminRefreshBases() {
+  const box = document.getElementById("cmp-admin-bases-list");
+  if (!box) return;
+  box.innerHTML = `<div class="cmp-admin-bases-empty">Cargando bases publicadas…</div>`;
+  try {
+    const r = await fetch(`${API}/cmp/bases`);
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const j = await r.json();
+    const published = (j.published || []).sort();
+    if (!published.length) {
+      box.innerHTML = `<div class="cmp-admin-bases-empty">Aún no hay ninguna base publicada.</div>`;
+      return;
+    }
+    // Para cada base, pedimos info ligera (mes + fecha + count)
+    const infos = await Promise.all(published.map(b =>
+      fetch(`${API}/cmp/info?base=${encodeURIComponent(b)}`)
+        .then(rr => rr.ok ? rr.json() : null)
+        .catch(() => null)
+    ));
+    box.innerHTML = published.map((b, i) => {
+      const info = infos[i] || {};
+      const month = info.month || "?";
+      const count = info.colleagueCount || 0;
+      const fecha = info.uploadedAt ? new Date(info.uploadedAt).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "?";
+      return `
+      <div class="cmp-admin-bases-row" data-testid="admin-base-row-${escape(b)}">
+        <div class="b-info">
+          <div class="b-name">📍 ${escape(b)} <span class="b-pin">${count} compañeros</span></div>
+          <div class="b-meta">${escape(month)} · ${escape(fecha)}</div>
+        </div>
+        <button type="button" class="btn-delete-base" data-del-base="${escape(b)}" data-testid="del-base-${escape(b)}">🗑 Eliminar</button>
+      </div>`;
+    }).join("");
+
+    // Listener eliminar
+    box.querySelectorAll("[data-del-base]").forEach(btn => {
+      btn.onclick = () => cmpAdminDeleteBase(btn.dataset.delBase);
+    });
+  } catch (e) {
+    box.innerHTML = `<div class="cmp-admin-bases-empty">Error cargando bases: ${escape(e.message)}</div>`;
+  }
+}
+
+async function cmpAdminDeleteBase(base) {
+  const pinInput = document.getElementById("cmp-admin-pin");
+  const pin = (pinInput?.value || "").trim();
+  if (!pin) {
+    showToast("Introduce primero el PIN admin para eliminar", "error");
+    pinInput?.focus();
+    return;
+  }
+  showConfirm({
+    title: `Eliminar cuadrante de ${base}`,
+    message: `¿Eliminar TODOS los datos publicados de la base ${base}? Esta acción borra el cuadrante y las tiras HD de esa base. Las demás bases NO se ven afectadas. Acción irreversible.`,
+    icon: "🗑", danger: true, confirmText: `Eliminar ${base}`,
+    onConfirm: async () => {
+      try {
+        const r = await fetch(`${API}/cmp/base/${encodeURIComponent(base)}`, {
+          method: "DELETE",
+          headers: { "X-Admin-Pin": pin }
+        });
+        if (r.status === 401) { showToast("PIN incorrecto", "error"); return; }
+        if (r.status === 404) { showToast(`No había cuadrante para ${base}`, "info"); }
+        else if (!r.ok) throw new Error("HTTP " + r.status);
+        else {
+          const j = await r.json();
+          showToast(`✅ Base ${j.base} eliminada (${j.deletedHdStrips} HD)`, "success");
+        }
+        cmpAdminRefreshBases();
+        cmpCloudRefreshStatus();
+      } catch (e) {
+        showToast("Error eliminando: " + e.message, "error");
+      }
+    }
+  });
 }
 
 // ============================================================================
@@ -6637,12 +7130,16 @@ function initCompaneros() {
   // Abrir modal
   document.getElementById("btn-companeros").onclick = () => {
     openModal("modal-companeros");
-    // Forzar tab "Subir" (Cargar Horario)
-    document.querySelectorAll("[data-cmptab]").forEach(x => x.classList.toggle("active", x.dataset.cmptab === "upload"));
-    document.querySelectorAll("[data-cmppanel]").forEach(p => { p.style.display = p.dataset.cmppanel === "upload" ? "block" : "none"; });
+    // Para no-admin: abrir directo en "Buscar" (no tienen permiso para "Subir")
+    const isAdmin = (typeof tfIsAdmin === "function") ? tfIsAdmin() : false;
+    const initialTab = isAdmin ? "upload" : "search";
+    document.querySelectorAll("[data-cmptab]").forEach(x => x.classList.toggle("active", x.dataset.cmptab === initialTab));
+    document.querySelectorAll("[data-cmppanel]").forEach(p => { p.style.display = p.dataset.cmppanel === initialTab ? "block" : "none"; });
     cmpUpdateCount();
     cmpRefreshSearch();
     cmpRefreshDay();
+    // Aplicar gating tras render (por si los selectores cambiaron)
+    try { tfApplyAdminGating && tfApplyAdminGating(); } catch(_) {}
   };
 
 
@@ -6732,7 +7229,12 @@ function initCompaneros() {
 // Si está vacía → mostramos pantalla de login bloqueante.
 // Al hacer logout, se conservan los turnos locales pero se vuelve a pedir matrícula al arrancar.
 function tfIsAuthenticated() {
-  return !!(settings && settings.myMatricula && /^\d{7}$/.test(settings.myMatricula));
+  if (!settings || !settings.myMatricula) return false;
+  return /^\d{7}$/.test(settings.myMatricula) || settings.myMatricula === "ADMIN";
+}
+
+function tfIsAdmin() {
+  return settings && settings.myMatricula === "ADMIN";
 }
 
 function tfShowLogin() {
@@ -6757,15 +7259,34 @@ function tfRefreshLoginStatus() {
   const status = document.getElementById("login-status");
   const txt = document.getElementById("login-status-text");
   if (!status || !txt) return;
-  const list = (typeof cmpColleagues !== "undefined" && Array.isArray(cmpColleagues)) ? cmpColleagues : [];
   status.classList.remove("ok", "warn");
-  if (list.length > 0) {
-    status.classList.add("ok");
-    txt.textContent = `✓ Plantilla cargada · ${list.length} matrícula${list.length === 1 ? '' : 's'} disponible${list.length === 1 ? '' : 's'}`;
-  } else {
-    status.classList.add("warn");
-    txt.textContent = "⚠ Aún no hay PDF de plantilla cargado. Pulsa el botón para subirlo.";
-  }
+  // Pedimos al backend qué bases tienen cuadrante publicado
+  fetch(`${API}/cmp/bases`).then(r => r.ok ? r.json() : null).then(j => {
+    const published = (j && j.published) || [];
+    if (published.length > 0) {
+      status.classList.add("ok");
+      txt.textContent = `✓ ${published.length} base${published.length === 1 ? '' : 's'} publicada${published.length === 1 ? '' : 's'} · ${published.join(' · ')}`;
+    } else {
+      // Fallback a plantilla local
+      const list = (typeof cmpColleagues !== "undefined" && Array.isArray(cmpColleagues)) ? cmpColleagues : [];
+      if (list.length > 0) {
+        status.classList.add("ok");
+        txt.textContent = `✓ Plantilla local · ${list.length} matrícula${list.length === 1 ? '' : 's'}`;
+      } else {
+        status.classList.add("warn");
+        txt.textContent = "⚠ Aún no hay PDF de plantilla cargado. Pulsa el botón para subirlo.";
+      }
+    }
+  }).catch(() => {
+    const list = (typeof cmpColleagues !== "undefined" && Array.isArray(cmpColleagues)) ? cmpColleagues : [];
+    if (list.length > 0) {
+      status.classList.add("ok");
+      txt.textContent = `✓ Plantilla local · ${list.length} matrícula${list.length === 1 ? '' : 's'}`;
+    } else {
+      status.classList.add("warn");
+      txt.textContent = "⚠ Sin conexión y sin plantilla local.";
+    }
+  });
 }
 
 function tfHideLogin() {
@@ -6777,36 +7298,93 @@ function tfHideLogin() {
 function tfUpdateUserPill() {
   const pill = document.getElementById("user-pill");
   const txt = document.getElementById("user-pill-text");
+  tfUpdateAdminBadge();
+  tfApplyAdminGating();
   if (!pill || !txt) return;
-  if (tfIsAuthenticated()) {
+  if (tfIsAdmin()) {
+    txt.textContent = "ADMIN";
+    pill.style.display = "inline-flex";
+    pill.classList.add("user-pill-admin");
+  } else if (tfIsAuthenticated()) {
     txt.textContent = settings.myMatricula;
     pill.style.display = "inline-flex";
+    pill.classList.remove("user-pill-admin");
   } else {
     pill.style.display = "none";
+    pill.classList.remove("user-pill-admin");
   }
 }
 
-function tfDoLogin(matricula) {
-  const clean = String(matricula || "").replace(/\D/g, "").slice(0, 7);
+async function tfDoLogin(matricula) {
+  const raw = String(matricula || "").trim();
   const err = document.getElementById("login-error");
+
+  // 🔑 Acceso especial admin: matrícula literal "ADMIN" (case-insensitive)
+  if (raw.toUpperCase() === "ADMIN") {
+    settings.myMatricula = "ADMIN";
+    saveStore();
+    const matInp = document.getElementById("set-myMatricula");
+    if (matInp) matInp.value = "";
+    tfHideLogin();
+    showToast("🔑 Sesión administrador iniciada", "success");
+    try { cmpRefreshSearch && cmpRefreshSearch(); } catch(_) {}
+    try { render && render(); } catch(_) {}
+    // Abrir panel admin automáticamente
+    setTimeout(() => { try { tfOpenAdminPanel(); } catch(_) {} }, 350);
+    return true;
+  }
+
+  const clean = raw.replace(/\D/g, "").slice(0, 7);
   if (!/^\d{7}$/.test(clean)) {
     if (err) { err.textContent = "⚠ Introduce una matrícula válida de 7 dígitos."; err.style.display = "block"; }
     return false;
   }
-  // 🆕 Validar contra la plantilla cargada (si hay compañeros, la matrícula debe existir).
-  // Si no hay PDF cargado todavía, permitimos el acceso (primera vez) y avisamos.
+  // 🔒 LISTA BLANCA ESTRICTA · La matrícula DEBE estar en algún PDF publicado.
+  // Buscamos en plantilla local primero (offline-friendly) y luego en la nube.
   const list = (typeof cmpColleagues !== "undefined" && Array.isArray(cmpColleagues)) ? cmpColleagues : [];
-  if (list.length > 0) {
-    const found = list.find(c => String(c.matricula || "").replace(/\D/g, "") === clean);
-    if (!found) {
-      if (err) {
-        err.textContent = `⚠ La matrícula ${clean} no figura en la plantilla cargada. Pide al admin que actualice el cuadrante.`;
-        err.style.display = "block";
+  const localMatch = list.find(c => String(c.matricula || "").replace(/\D/g, "") === clean);
+
+  // Pista visual mientras valida
+  if (err) { err.style.display = "none"; }
+  const submitBtn = document.getElementById("login-submit");
+  const originalLabel = submitBtn?.textContent;
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Validando…"; }
+
+  let detectedBase = localMatch?._base || "";
+  let cloudLookupOk = false;
+  let cloudReachable = false;
+  if (!detectedBase) {
+    try {
+      const r = await fetch(`${API}/cmp/lookup/${clean}`);
+      cloudReachable = true;
+      if (r.ok) {
+        const j = await r.json();
+        detectedBase = j.base || "";
+        cloudLookupOk = true;
       }
-      return false;
-    }
+    } catch(_) { /* sin conexión */ }
   }
+
+  if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel || "Entrar →"; }
+
+  // 🚫 DENEGAR: ni local ni nube tienen la matrícula
+  if (!localMatch && !detectedBase) {
+    if (err) {
+      if (cloudReachable && !cloudLookupOk) {
+        err.textContent = `⛔ Matrícula no registrada. La matrícula ${clean} no figura en ningún cuadrante publicado.`;
+      } else if (!cloudReachable && list.length === 0) {
+        err.textContent = `⛔ Sin conexión y sin plantilla local. Conecta a internet o pide al admin que cargue tu cuadrante.`;
+      } else {
+        err.textContent = `⛔ Matrícula no registrada.`;
+      }
+      err.style.display = "block";
+    }
+    showToast("Matrícula no registrada", "error");
+    return false;
+  }
+
   settings.myMatricula = clean;
+  if (detectedBase) settings.userBase = detectedBase;
   saveStore();
   // Sincronizar input de Ajustes
   const matInp = document.getElementById("set-myMatricula");
@@ -6846,6 +7424,131 @@ function tfDoLogout() {
   });
 }
 
+// ============================================
+// 🔑 PANEL ADMIN (matrícula literal "ADMIN")
+// ============================================
+function tfOpenAdminPanel() {
+  if (!tfIsAdmin()) {
+    showToast("Solo el administrador puede abrir este panel", "error");
+    return;
+  }
+  tfRefreshAdminPanel();
+  openModal("modal-admin");
+}
+
+function tfRefreshAdminPanel() {
+  const list = (typeof cmpColleagues !== "undefined" && Array.isArray(cmpColleagues)) ? cmpColleagues : [];
+  const matEl = document.getElementById("admin-stat-matriculas");
+  const monthEl = document.getElementById("admin-stat-month");
+  const syncEl = document.getElementById("admin-stat-sync");
+  if (matEl) matEl.textContent = list.length;
+  if (monthEl) {
+    const months = new Set(list.map(c => c.month).filter(Boolean));
+    monthEl.textContent = months.size ? [...months][0] : "—";
+  }
+  if (syncEl) {
+    const ts = localStorage.getItem("tf_cloud_last_sync") || "";
+    if (ts) {
+      try {
+        const d = new Date(ts);
+        syncEl.textContent = d.toLocaleDateString("es-ES", { day: "2-digit", month: "short" });
+      } catch(_) { syncEl.textContent = "—"; }
+    } else {
+      syncEl.textContent = list.length ? "Local" : "—";
+    }
+  }
+  tfRenderAdminList("");
+  const countEl = document.getElementById("admin-list-count");
+  if (countEl) countEl.textContent = list.length;
+}
+
+function tfRenderAdminList(filter) {
+  const list = (typeof cmpColleagues !== "undefined" && Array.isArray(cmpColleagues)) ? cmpColleagues : [];
+  const box = document.getElementById("admin-list");
+  if (!box) return;
+  const q = (filter || "").toLowerCase().trim();
+  const rows = list.filter(c => {
+    if (!q) return true;
+    return (c.name || "").toLowerCase().includes(q) || (c.matricula || "").includes(q);
+  });
+  if (!rows.length) {
+    box.innerHTML = `<div class="admin-list-empty">${list.length ? 'Sin resultados para "' + escape(q) + '"' : 'No hay matrículas cargadas. Sube un PDF de plantilla.'}</div>`;
+    return;
+  }
+  // Limit visible rows for perf (admin can filter)
+  const visible = rows.slice(0, 80);
+  box.innerHTML = visible.map(c => `
+    <div class="admin-list-row" data-testid="admin-row-${escape(c.matricula)}">
+      <span class="admin-list-mat">${escape(c.matricula)}</span>
+      <span class="admin-list-name" title="${escape(c.name)}">${escape(c.name)}</span>
+    </div>
+  `).join("") + (rows.length > 80 ? `<div class="admin-list-empty">+${rows.length - 80} más · refina el filtro</div>` : "");
+}
+
+function tfInitAdmin() {
+  const btn = document.getElementById("btn-admin-panel");
+  if (btn) btn.addEventListener("click", tfOpenAdminPanel);
+  const openUpload = document.getElementById("admin-open-upload");
+  if (openUpload) openUpload.addEventListener("click", () => {
+    closeModal("modal-admin");
+    setTimeout(() => document.getElementById("btn-companeros")?.click(), 200);
+  });
+  const openSearch = document.getElementById("admin-open-search");
+  if (openSearch) openSearch.addEventListener("click", () => {
+    closeModal("modal-admin");
+    setTimeout(() => {
+      document.getElementById("btn-companeros")?.click();
+      setTimeout(() => document.querySelector('[data-cmptab="search"]')?.click(), 250);
+    }, 200);
+  });
+  const clearLocal = document.getElementById("admin-clear-local");
+  if (clearLocal) clearLocal.addEventListener("click", () => {
+    closeModal("modal-admin");
+    setTimeout(() => document.getElementById("cmp-clear-all")?.click(), 200);
+  });
+  const filter = document.getElementById("admin-filter");
+  if (filter) filter.addEventListener("input", () => tfRenderAdminList(filter.value));
+  const logout = document.getElementById("admin-logout");
+  if (logout) logout.addEventListener("click", () => {
+    closeModal("modal-admin");
+    setTimeout(tfDoLogout, 200);
+  });
+}
+
+// Actualizar visibilidad del botón admin tras cada cambio de sesión
+function tfUpdateAdminBadge() {
+  const btn = document.getElementById("btn-admin-panel");
+  if (!btn) return;
+  btn.style.display = tfIsAdmin() ? "inline-flex" : "none";
+}
+
+// 🔒 Gating de acceso: ocultar todos los elementos data-admin-only para no-admin
+function tfApplyAdminGating() {
+  const isAdmin = tfIsAdmin();
+  document.querySelectorAll("[data-admin-only]").forEach(el => {
+    if (isAdmin) {
+      // Restaurar display si tenía uno guardado, si no quitar 'none'
+      const orig = el.dataset.adminOrigDisplay;
+      if (orig) el.style.display = orig;
+      else if (el.style.display === "none" && el.id !== "cmp-admin-panel") el.style.display = "";
+    } else {
+      // Guardar el display original solo la primera vez
+      if (!el.dataset.adminOrigDisplay && el.style.display && el.style.display !== "none") {
+        el.dataset.adminOrigDisplay = el.style.display;
+      }
+      el.style.display = "none";
+    }
+  });
+  // Si el modal Compañeros está abierto y la pestaña activa es "upload" pero no es admin → forzar "search"
+  if (!isAdmin) {
+    const uploadPanel = document.querySelector('.cmp-panel[data-cmppanel="upload"]');
+    if (uploadPanel && uploadPanel.style.display !== "none") {
+      const searchTab = document.querySelector('[data-cmptab="search"]');
+      if (searchTab) searchTab.click();
+    }
+  }
+}
+
 function tfInitAuth() {
   const form = document.getElementById("login-form");
   const inp = document.getElementById("login-matricula");
@@ -6858,9 +7561,16 @@ function tfInitAuth() {
   }
   if (inp) {
     inp.addEventListener("input", () => {
-      // Solo dígitos, máx 7
-      const cleaned = inp.value.replace(/\D/g, "").slice(0, 7);
-      if (cleaned !== inp.value) inp.value = cleaned;
+      // Permite dígitos para matrículas + texto "ADMIN" (mayúsculas/minúsculas)
+      const v = inp.value;
+      const isAdminLike = /^a/i.test(v);
+      let cleaned;
+      if (isAdminLike) {
+        cleaned = v.replace(/[^A-Za-z]/g, "").toUpperCase().slice(0, 5);
+      } else {
+        cleaned = v.replace(/\D/g, "").slice(0, 7);
+      }
+      if (cleaned !== v) inp.value = cleaned;
       if (err) err.style.display = "none";
     });
   }
@@ -6906,6 +7616,8 @@ window.addEventListener("DOMContentLoaded", () => {
   initCompaneros();
   // 🔐 Auth · login por matrícula (debe ir después de loadStore para tener settings.myMatricula)
   tfInitAuth();
+  // 🔑 Panel Admin
+  tfInitAdmin();
   // 🎓 Onboarding tour
   tfInitTour();
   tfInitInstantSave();
