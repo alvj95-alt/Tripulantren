@@ -1487,6 +1487,43 @@ body::before { display: none !important; }
 .user-pill.user-pill-admin .user-pill-logout { background: rgba(255, 255, 255, 0.15); color: #FEF3C7; }
 .user-pill.user-pill-admin .user-pill-logout:hover { background: #FEF3C7; color: #B45309; }
 
+/* 📍 Pill "Base detectada" (header) */
+.base-detected-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--primary) 18%, transparent),
+    color-mix(in srgb, var(--primary) 8%, transparent));
+  border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  color: var(--text);
+  padding: 5px 12px 5px 10px;
+  border-radius: 999px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.04em;
+  animation: bdpAppear 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes bdpAppear {
+  from { opacity: 0; transform: translateY(-4px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.bdp-ico { font-size: 13px; line-height: 1; }
+.bdp-label {
+  color: var(--text-3); font-weight: 600;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+}
+.bdp-name {
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+.base-detected-pill.is-admin {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, #B45309 22%, transparent),
+    color-mix(in srgb, #B45309 8%, transparent));
+  border-color: #B45309;
+}
+.base-detected-pill.is-admin .bdp-name { color: #B45309; }
+
 .ft-author-base {
   display: inline-block;
   margin-left: 6px;
@@ -1651,6 +1688,11 @@ body::before { display: none !important; }
       </div>
     </div>
     <div class="flex items-center gap-2 no-print">
+      <span id="base-detected-pill" class="base-detected-pill" data-testid="base-detected-pill" style="display:none">
+        <span class="bdp-ico">📍</span>
+        <span class="bdp-label">Base detectada</span>
+        <span class="bdp-name" id="base-detected-name" data-testid="base-detected-name">—</span>
+      </span>
       <button id="btn-admin-panel" class="btn-icon admin-badge-btn" title="Panel admin" data-testid="btn-admin-panel" style="display:none">
         <span class="admin-badge-ico">🔑</span>
         <span class="admin-badge-label">Admin</span>
@@ -7251,8 +7293,24 @@ function tfShowLogin() {
   // Ocultar pill de usuario mientras esté en login
   const pill = document.getElementById("user-pill");
   if (pill) pill.style.display = "none";
+  // Ocultar también el pill "Base detectada" mientras no haya sesión
+  const bdp = document.getElementById("base-detected-pill");
+  if (bdp) bdp.style.display = "none";
+  baseUsuario = ""; window.baseUsuario = "";
+  // 🔒 Aplicar gating admin-only (oculta "Cargar PDF" si no hay sesión admin)
+  try { tfApplyAdminGating && tfApplyAdminGating(); } catch(_) {}
   // Refrescar estado de plantilla cargada
   tfRefreshLoginStatus();
+  // 🚀 Sync pasivo en background al abrir la pantalla.
+  // Así, cuando el usuario teclee su matrícula, las bases ya están actualizadas.
+  if (typeof tfSyncAllBasesFromGitHub === "function" && !window.__tfSilentSyncRan) {
+    window.__tfSilentSyncRan = true;
+    setTimeout(() => {
+      tfSyncAllBasesFromGitHub({ silent: true })
+        .then(() => tfRefreshLoginStatus())
+        .catch(() => {});
+    }, 300);
+  }
 }
 
 function tfRefreshLoginStatus() {
@@ -7274,7 +7332,7 @@ function tfRefreshLoginStatus() {
         txt.textContent = `✓ Plantilla local · ${list.length} matrícula${list.length === 1 ? '' : 's'}`;
       } else {
         status.classList.add("warn");
-        txt.textContent = "⚠ Aún no hay PDF de plantilla cargado. Pulsa el botón para subirlo.";
+        txt.textContent = "🔄 Sincronizando bases desde el repositorio…";
       }
     }
   }).catch(() => {
@@ -7300,6 +7358,10 @@ function tfUpdateUserPill() {
   const txt = document.getElementById("user-pill-text");
   tfUpdateAdminBadge();
   tfApplyAdminGating();
+  // 🌐 Mantener baseUsuario sincronizada con settings.userBase
+  baseUsuario = settings.userBase || "";
+  window.baseUsuario = baseUsuario;
+  tfUpdateBaseDetectedPill();
   if (!pill || !txt) return;
   if (tfIsAdmin()) {
     txt.textContent = "ADMIN";
@@ -7312,6 +7374,165 @@ function tfUpdateUserPill() {
   } else {
     pill.style.display = "none";
     pill.classList.remove("user-pill-admin");
+  }
+}
+
+// ============================================================================
+// 📥 GITHUB SYNC · Descarga PDFs de cada base desde repo GitHub Raw
+// ============================================================================
+// Estructura esperada en el repo:
+//   archivos/<NombreBase>/horario.pdf
+// Configurable: cambia GITHUB_REPO_OWNER / NAME / BRANCH si usas otro repo.
+const GITHUB_REPO_OWNER = "alvj95-alt";
+const GITHUB_REPO_NAME  = "Tripulantren";
+const GITHUB_REPO_BRANCH = "main";
+
+// Lista de bases a sincronizar. Se puede modificar libremente.
+const TF_SYNC_BASES = ["Madrid", "Barcelona", "Sevilla", "Málaga", "Valencia", "Bilbao", "Zaragoza", "A Coruña", "Granada"];
+
+function tfGithubUrlForBase(base) {
+  return `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/${GITHUB_REPO_BRANCH}/archivos/${encodeURIComponent(base)}/horario.pdf`;
+}
+
+// Descarga un PDF concreto y lo procesa con cmpProcessFile para indexar matrículas.
+async function tfSyncBaseFromGitHub(base) {
+  const url = tfGithubUrlForBase(base);
+  const r = await fetch(url, { cache: "no-store" });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const blob = await r.blob();
+  // Marcar etag/last-modified para detectar cambios
+  const meta = {
+    base,
+    url,
+    etag: r.headers.get("etag") || "",
+    lastModified: r.headers.get("last-modified") || "",
+    sizeKB: Math.round(blob.size / 1024),
+    syncedAt: new Date().toISOString(),
+  };
+  localStorage.setItem(`tf_horario_meta_${base}`, JSON.stringify(meta));
+  // Procesar PDF con la pipeline existente para extraer matrículas
+  if (typeof cmpProcessFile === "function") {
+    const file = new File([blob], `${base}-horario.pdf`, { type: "application/pdf" });
+    // Tag automático: tras procesar, marcamos todos los nuevos compañeros con _base
+    const before = new Set((cmpColleagues || []).map(c => c.id));
+    try {
+      // Procesa y guarda → nuestros nuevos compañeros heredan la base
+      await cmpProcessFile(file);
+      // Auto-import si quedan en pending (cmpProcessFile suele dejar items en cmpPendingImport)
+      if (typeof cmpPendingImport !== "undefined" && Array.isArray(cmpPendingImport) && cmpPendingImport.length) {
+        cmpPendingImport.forEach(c => { c._base = base; });
+        try { await cmpConfirmImport && cmpConfirmImport(); } catch(_) {}
+      }
+      // Tag definitivo en cmpColleagues (los recién añadidos)
+      (cmpColleagues || []).forEach(c => {
+        if (!before.has(c.id) && !c._base) c._base = base;
+      });
+      try { cmpSaveStore && cmpSaveStore(); } catch(_) {}
+    } catch(e) {
+      console.warn(`Procesado fallido para ${base}:`, e.message);
+    }
+  }
+  return meta;
+}
+
+// Sincroniza TODAS las bases configuradas. Devuelve métricas.
+async function tfSyncAllBasesFromGitHub(opts = {}) {
+  const silent = !!opts.silent;
+  const results = { ok: [], failed: [] };
+  for (const base of TF_SYNC_BASES) {
+    try {
+      const meta = await tfSyncBaseFromGitHub(base);
+      results.ok.push({ base, sizeKB: meta.sizeKB });
+      if (!silent) showToast(`☁️ ${base} actualizado (${meta.sizeKB} KB)`, "success");
+    } catch (e) {
+      results.failed.push({ base, error: e.message });
+      // En silent solo log; sin toast (la mayoría no tendrán PDF y daría 404)
+      if (!silent) console.warn(`Sync ${base} falló:`, e.message);
+    }
+  }
+  localStorage.setItem("tf_cloud_last_sync", new Date().toISOString());
+  return results;
+}
+
+// ============================================================================
+// 🏢 FILTRADO POR BASE · Aplica filter en cmpRefreshSearch/cmpRefreshDay
+// ============================================================================
+// Wrapper de cmpColleagues que devuelve SOLO los de la base del usuario.
+// Admin (matrícula = "ADMIN") ve todas las bases sin filtrar.
+function tfFilteredColleagues() {
+  const all = (typeof cmpColleagues !== "undefined" && Array.isArray(cmpColleagues)) ? cmpColleagues : [];
+  if (tfIsAdmin()) return all;
+  const userBase = settings.userBase || "";
+  if (!userBase) return all;
+  // Mostrar SOLO la base del usuario. Si no hay tag _base, asumimos legacy y lo mostramos.
+  return all.filter(c => !c._base || c._base === userBase);
+}
+
+// Hook universal: parchea cmpRefreshSearch / cmpRefreshDay para usar el filtro.
+// Se ejecuta una sola vez al cargar.
+(function tfInstallBaseFilter() {
+  if (window.__tfBaseFilterInstalled) return;
+  window.__tfBaseFilterInstalled = true;
+  // Esperar al DOMContentLoaded para tener las funciones definidas
+  const installFn = () => {
+    if (typeof cmpRefreshSearch === "function" && !cmpRefreshSearch.__wrapped) {
+      const origSearch = cmpRefreshSearch;
+      window.cmpRefreshSearch = function(...args) {
+        // Sustitución temporal del array global
+        const saved = window.cmpColleagues;
+        window.cmpColleagues = tfFilteredColleagues();
+        try { return origSearch.apply(this, args); }
+        finally { window.cmpColleagues = saved; }
+      };
+      window.cmpRefreshSearch.__wrapped = true;
+    }
+    if (typeof cmpRefreshDay === "function" && !cmpRefreshDay.__wrapped) {
+      const origDay = cmpRefreshDay;
+      window.cmpRefreshDay = function(...args) {
+        const saved = window.cmpColleagues;
+        window.cmpColleagues = tfFilteredColleagues();
+        try { return origDay.apply(this, args); }
+        finally { window.cmpColleagues = saved; }
+      };
+      window.cmpRefreshDay.__wrapped = true;
+    }
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", installFn);
+  } else {
+    setTimeout(installFn, 0);
+  }
+})();
+
+// ============================================================================
+// 🌐 BASE USUARIO · Variable global accesible para todo el resto del código
+// ============================================================================
+// Se mantiene sincronizada con settings.userBase. El resto de funciones pueden
+// leer `baseUsuario` directamente sin acceder a settings.
+let baseUsuario = "";
+
+function tfSetBaseUsuario(base) {
+  baseUsuario = base || "";
+  window.baseUsuario = baseUsuario; // expuesta también en window
+  tfUpdateBaseDetectedPill();
+}
+
+function tfUpdateBaseDetectedPill() {
+  const pill = document.getElementById("base-detected-pill");
+  const nameEl = document.getElementById("base-detected-name");
+  if (!pill || !nameEl) return;
+  if (tfIsAdmin()) {
+    // Admin: indicar acceso global, no una base concreta
+    pill.style.display = "inline-flex";
+    pill.classList.add("is-admin");
+    nameEl.textContent = "Todas (Admin)";
+  } else if (baseUsuario) {
+    pill.style.display = "inline-flex";
+    pill.classList.remove("is-admin");
+    nameEl.textContent = baseUsuario;
+  } else {
+    pill.style.display = "none";
+    pill.classList.remove("is-admin");
   }
 }
 
@@ -7339,53 +7560,53 @@ async function tfDoLogin(matricula) {
     if (err) { err.textContent = "⚠ Introduce una matrícula válida de 7 dígitos."; err.style.display = "block"; }
     return false;
   }
-  // 🔒 LISTA BLANCA ESTRICTA · La matrícula DEBE estar en algún PDF publicado.
-  // Buscamos en plantilla local primero (offline-friendly) y luego en la nube.
-  const list = (typeof cmpColleagues !== "undefined" && Array.isArray(cmpColleagues)) ? cmpColleagues : [];
-  const localMatch = list.find(c => String(c.matricula || "").replace(/\D/g, "") === clean);
-
-  // Pista visual mientras valida
+  // 🔒 VALIDACIÓN ESTRICTA · La matrícula DEBE existir en el PDF de su base.
+  // Antes de buscar, sincronizamos los PDFs de GitHub para tener la plantilla actualizada.
   if (err) { err.style.display = "none"; }
   const submitBtn = document.getElementById("login-submit");
   const originalLabel = submitBtn?.textContent;
-  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Validando…"; }
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "🔄 Sincronizando bases…"; }
 
-  let detectedBase = localMatch?._base || "";
-  let cloudLookupOk = false;
-  let cloudReachable = false;
-  if (!detectedBase) {
+  // 1. Sync GitHub (silent · si falla, seguimos con plantilla local)
+  try {
+    if (typeof tfSyncAllBasesFromGitHub === "function") {
+      await tfSyncAllBasesFromGitHub({ silent: true });
+    }
+  } catch(_) {}
+
+  if (submitBtn) submitBtn.textContent = "Validando matrícula…";
+
+  // 2. Buscar en la plantilla local (post-sync)
+  const list = (typeof cmpColleagues !== "undefined" && Array.isArray(cmpColleagues)) ? cmpColleagues : [];
+  const localMatch = list.find(c => String(c.matricula || "").replace(/\D/g, "") === clean);
+
+  // 3. Lookup remoto MongoDB (refuerzo)
+  let cloudMatch = null;
+  if (!localMatch) {
     try {
       const r = await fetch(`${API}/cmp/lookup/${clean}`);
-      cloudReachable = true;
-      if (r.ok) {
-        const j = await r.json();
-        detectedBase = j.base || "";
-        cloudLookupOk = true;
-      }
-    } catch(_) { /* sin conexión */ }
+      if (r.ok) cloudMatch = await r.json();
+    } catch(_) {}
   }
 
   if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel || "Entrar →"; }
 
-  // 🚫 DENEGAR: ni local ni nube tienen la matrícula
-  if (!localMatch && !detectedBase) {
+  // 🚫 DENEGAR si no aparece en ningún PDF / cuadrante
+  if (!localMatch && !cloudMatch) {
     if (err) {
-      if (cloudReachable && !cloudLookupOk) {
-        err.textContent = `⛔ Matrícula no registrada. La matrícula ${clean} no figura en ningún cuadrante publicado.`;
-      } else if (!cloudReachable && list.length === 0) {
-        err.textContent = `⛔ Sin conexión y sin plantilla local. Conecta a internet o pide al admin que cargue tu cuadrante.`;
-      } else {
-        err.textContent = `⛔ Matrícula no registrada.`;
-      }
+      err.textContent = "⛔ Matrícula no encontrada";
       err.style.display = "block";
     }
-    showToast("Matrícula no registrada", "error");
+    showToast("Matrícula no encontrada", "error");
     return false;
   }
 
+  const detectedBase = localMatch?._base || cloudMatch?.base || "";
   settings.myMatricula = clean;
   if (detectedBase) settings.userBase = detectedBase;
   saveStore();
+  // 🌐 Sincronizar variable global + pill visible
+  tfSetBaseUsuario(detectedBase);
   // Sincronizar input de Ajustes
   const matInp = document.getElementById("set-myMatricula");
   if (matInp) matInp.value = clean;
