@@ -442,6 +442,34 @@ function guardarDatos(){
 }
 
 let estado = cargarDatos();
+
+function migrarDatos(){
+  let cambiado = false;
+  estado.deudas.forEach(d=>{
+    if(!d.movimientos) { d.movimientos = []; cambiado = true; }
+    let origenMov = d.movimientos.find(m=>m.tipo==='origen');
+    if(!origenMov){
+      // deuda antigua sin movimiento de origen: lo creamos con el importe que tengamos guardado
+      d.movimientos.unshift({
+        id: 'd_'+Date.now()+'_'+Math.floor(Math.random()*1000),
+        tipo:'origen', monto: d.montoInicial||0,
+        fecha: d.fechaInicio || new Date().toISOString().slice(0,10),
+        nota:'Deuda registrada', pagada:false, fechaPago:null
+      });
+      cambiado = true;
+    } else if((!origenMov.monto || origenMov.monto<=0) && d.montoInicial>0){
+      // el movimiento de origen se guardó en su día sin el importe real: lo reparamos
+      origenMov.monto = d.montoInicial;
+      cambiado = true;
+    }
+    d.movimientos.forEach(m=>{
+      if((m.tipo==='origen'||m.tipo==='compra') && m.pagada===undefined){ m.pagada=false; m.fechaPago=null; cambiado=true; }
+    });
+    if(!d.modalidadPago){ d.modalidadPago='cuota'; cambiado = true; }
+  });
+  if(cambiado) guardarDatos();
+}
+migrarDatos();
 let filtroActual = 'todas';
 let estrategiaActual = 'nieve';
 let deudaSeleccionadaId = null; // para modales
@@ -511,7 +539,7 @@ function pagoPendienteEsteMes(deuda){
 }
 
 /* ================== NAVEGACION ================== */
-function ir(id, el){
+function ir(id, el, desdeBack){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('s-'+id).classList.add('active');
   document.querySelectorAll('.navitem').forEach(n=>n.classList.remove('on'));
@@ -519,6 +547,7 @@ function ir(id, el){
   if(id==='evolucion') renderEvolucion();
   if(id==='simulador') renderSimulador();
   if(id==='historial') renderSelectorHistorial();
+  if(!desdeBack) history.pushState({tipo:'screen', screen:id}, '');
 }
 
 /* ================== RENDER: INICIO ================== */
@@ -661,6 +690,7 @@ function abrirModalDeuda(idAEditar){
   document.getElementById('f-cuota-field').style.display = esCompleto ? 'none' : '';
 
   document.getElementById('overlay-deuda').classList.add('active');
+  history.pushState({tipo:'modal'}, '');
 }
 function cerrarModalDeuda(){ document.getElementById('overlay-deuda').classList.remove('active'); editandoDeudaId = null; }
 function seleccionarTipo(el){
@@ -739,6 +769,7 @@ function abrirOpciones(id){
   const btnCancelar = document.getElementById('op-cancelar-btn');
   btnCancelar.textContent = d.estado==='cancelada' ? 'Reactivar deuda' : 'Marcar como cancelada';
   document.getElementById('overlay-opciones').classList.add('active');
+  history.pushState({tipo:'modal'}, '');
 }
 function cerrarOpciones(){ document.getElementById('overlay-opciones').classList.remove('active'); }
 function irAPagoDesdeOpciones(){
@@ -790,6 +821,7 @@ function abrirModalPago(id){
   document.getElementById('pg-fecha').value = new Date().toISOString().slice(0,10);
   document.getElementById('pg-nota').value = '';
   document.getElementById('overlay-pago').classList.add('active');
+  history.pushState({tipo:'modal'}, '');
 }
 function cerrarModalPago(){ document.getElementById('overlay-pago').classList.remove('active'); }
 function guardarPago(){
@@ -813,6 +845,7 @@ function abrirModalCompra(id){
   document.getElementById('cp-monto').value = '';
   document.getElementById('cp-fecha').value = new Date().toISOString().slice(0,10);
   document.getElementById('overlay-compra').classList.add('active');
+  history.pushState({tipo:'modal'}, '');
 }
 function cerrarModalCompra(){ document.getElementById('overlay-compra').classList.remove('active'); }
 function guardarCompra(){
@@ -1019,6 +1052,21 @@ function toggleMovimientoPagado(deudaId, movId){
   guardarDatos();
   renderHistorial(deudaId);
 }
+
+/* ================== BOTÓN ATRÁS (no cerrar la app) ================== */
+history.replaceState({tipo:'screen', screen:'inicio'}, '');
+window.addEventListener('popstate', function(){
+  const overlayActivo = document.querySelector('.overlay.active');
+  if(overlayActivo){
+    overlayActivo.classList.remove('active');
+    return;
+  }
+  if(!document.getElementById('s-inicio').classList.contains('active')){
+    ir('inicio', document.querySelectorAll('.navitem')[0], true);
+    history.pushState({tipo:'screen', screen:'inicio'}, '');
+  }
+  // si ya estamos en Inicio y no hay ningún modal abierto, se deja salir de la app con normalidad
+});
 
 /* ================== INICIALIZACION ================== */
 renderInicio();
