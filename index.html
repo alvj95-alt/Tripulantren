@@ -159,6 +159,63 @@
   .gf-nombre{font-size:14.5px; font-weight:700;}
   .gf-meta{font-size:11px; color:var(--text-dim); margin-top:2px;}
   .gf-monto{font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:700; white-space:nowrap;}
+
+  /* ---- Bento hero (Inicio) ---- */
+  .bento{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px;}
+  .bento-tile{border-radius:20px; padding:16px; position:relative; overflow:hidden;}
+  .tile-big{grid-column:1/3; background:var(--grad); padding:22px;}
+  .tile-big .l{font-size:12px; color:rgba(255,255,255,.85); font-weight:600;}
+  .tile-big .n{font-family:'Space Grotesk',sans-serif; font-size:38px; font-weight:700; color:#fff; margin-top:4px;}
+  .tile-big .s{font-size:11.5px; color:rgba(255,255,255,.85); margin-top:8px;}
+  .tile-sm{background:var(--panel); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid var(--line);}
+  .tile-sm .icon{font-size:19px;}
+  .tile-sm .n{font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; margin-top:8px;}
+  .tile-sm .l{font-size:10px; color:var(--text-dim); margin-top:2px; font-weight:600; text-transform:uppercase; letter-spacing:.3px;}
+
+  /* ---- Próximo a pagar (lista unificada) ---- */
+  .prox-fila{
+    background:var(--panel); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border:1px solid var(--line); border-radius:16px; padding:13px 15px; margin-bottom:9px;
+    display:flex; align-items:center; gap:12px; cursor:pointer;
+    transition: transform .35s ease, opacity .35s ease, max-height .35s ease, margin .35s ease, padding .35s ease;
+    max-height:80px; overflow:hidden;
+  }
+  .prox-fila.saliendo{ transform:translateX(120%) scale(.9); opacity:0; max-height:0; margin-bottom:0; padding-top:0; padding-bottom:0; border-width:0; }
+  .prox-bar{width:4px; height:32px; border-radius:3px; flex-shrink:0;}
+  .prox-info{flex:1; min-width:0;}
+  .prox-nom{font-weight:700; font-size:14px;}
+  .prox-sub{font-size:10.5px; color:var(--text-dim); margin-top:1px;}
+  .prox-monto{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14.5px; white-space:nowrap;}
+  .empty-msg{display:none; text-align:center; color:var(--text-dim); font-size:12.5px; padding:16px 10px;}
+  .empty-msg.show{display:block;}
+
+  /* ---- Bloques plegables (pagado este mes / ver todo) ---- */
+  .plegable{background:var(--panel); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid var(--line); border-radius:16px; padding:14px 16px; margin-top:6px; cursor:pointer;}
+  .plegable-top{display:flex; justify-content:space-between; align-items:center; font-size:12.5px; font-weight:700; color:var(--text-dim);}
+  .plegable-lista{margin-top:0; max-height:0; overflow:hidden; transition:.25s;}
+  .plegable-lista.abierto{margin-top:10px; max-height:400px; overflow-y:auto;}
+  .plegable-item{display:flex; justify-content:space-between; font-size:12.5px; padding:8px 0; border-top:1px solid var(--line); color:var(--text-dim);}
+  .plegable-item b{color:var(--green); font-family:'Space Grotesk',sans-serif;}
+
+  .ver-todo-toggle{
+    display:flex; justify-content:space-between; align-items:center; text-align:center; margin-top:22px; padding:13px 16px;
+    background:var(--panel); border:1px solid var(--line); border-radius:16px; font-weight:700; font-size:13px; color:var(--blue); cursor:pointer;
+  }
+
+  /* ---- Sheet de confirmación ---- */
+  .sheet-confirm{
+    background:var(--panel); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px);
+    width:100%; max-width:520px; border-radius:24px 24px 0 0; padding:24px 22px 28px;
+    box-shadow:0 -10px 40px rgba(43,27,92,.25);
+  }
+  .sheet-nombre{font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700;}
+  .sheet-sub{font-size:12px; color:var(--text-dim); margin-top:3px;}
+  .sheet-monto{font-family:'Space Grotesk',sans-serif; font-size:32px; font-weight:700; margin-top:14px;}
+  .sheet-pregunta{font-size:13.5px; color:var(--text-dim); margin-top:6px; margin-bottom:18px; font-weight:500;}
+  .sheet-btn{width:100%; padding:14px; border-radius:14px; border:none; font-size:14px; font-weight:700; margin-bottom:10px; cursor:pointer;}
+  .sheet-btn.si{background:var(--green); color:#fff;}
+  .sheet-btn.no{background:var(--panel-2); color:var(--text);}
+  .sheet-link{display:block; text-align:center; font-size:12.5px; color:var(--blue); font-weight:700; margin-top:4px; cursor:pointer;}
   .empty button{margin-top:14px;}
 
   .btn{
@@ -264,64 +321,72 @@
 <div class="screen active" id="s-inicio">
   <div class="topbar"><h1>Deudas</h1><span class="fecha" id="fecha-hoy"></span></div>
 
-  <div class="widget">
-    <div class="widget-left">
-      <div class="l">DEBES EN TOTAL</div>
-      <div class="n" id="w-pendiente">0 €</div>
+  <div class="bento">
+    <div class="bento-tile tile-big">
+      <div class="l">DISPONIBLE ESTE MES</div>
+      <div class="n" id="bento-disponible">—</div>
+      <div class="s" id="bento-disponible-sub">—</div>
     </div>
-    <div class="widget-right">
-      <div class="l">PRÓXIMA CUOTA</div>
-      <div class="n" id="w-proxima">—</div>
-      <div class="d" id="w-proxima-fecha"></div>
+    <div class="bento-tile tile-sm">
+      <div class="icon">📉</div>
+      <div class="n" id="bento-debes" style="color:var(--coral)">0 €</div>
+      <div class="l">Debes</div>
     </div>
-  </div>
-
-  <div class="balance-row">
-    <div class="balance-chip">
-      <div class="l">Te deben a ti</div>
-      <div class="n" id="w-me-deben" style="color:var(--green);">0 €</div>
-    </div>
-    <div class="balance-chip">
-      <div class="l">Balance neto</div>
-      <div class="n" id="w-balance-neto">0 €</div>
+    <div class="bento-tile tile-sm">
+      <div class="icon">📈</div>
+      <div class="n" id="bento-me-deben" style="color:var(--mint)">0 €</div>
+      <div class="l">Te deben</div>
     </div>
   </div>
 
-  <div class="panel">
-    <div class="panel-label">CUOTA GENERAL · ESTE MES</div>
-    <div class="panel-num" id="p-cuota-general">0 €</div>
-    <div class="desglose" id="p-desglose"></div>
+  <div class="seccion">Próximo a pagar <span id="prox-contador"></span></div>
+  <div id="lista-proximos"></div>
+  <div class="empty-msg" id="prox-empty">🎉 Nada pendiente por ahora — todo al día</div>
+
+  <div class="plegable" onclick="togglePlegablePagado()">
+    <div class="plegable-top"><span id="plegable-pagado-titulo">✓ Pagado este mes (0)</span><span id="plegable-pagado-flecha">▾</span></div>
+    <div class="plegable-lista" id="plegable-pagado-lista"></div>
   </div>
 
-  <div class="panel" id="panel-ingreso">
-    <div class="panel-label">INGRESO ESTIMADO (TrenTurnos) <span id="ingreso-estado" style="font-weight:400;"></span></div>
-    <div class="panel-num" id="p-ingreso-estimado" style="color:var(--green);">—</div>
-    <div class="subrow">
-      <div><div class="n" id="p-cuota-general-2">0 €</div><div class="l">cuota deudas</div></div>
-      <div><div class="n" id="p-gastos-fijos-2">0 €</div><div class="l">gastos fijos</div></div>
-      <div><div class="n" id="p-disponible">—</div><div class="l">te queda disponible</div></div>
+  <div class="ver-todo-toggle" onclick="toggleVerTodo()">
+    <span id="ver-todo-txt">Ver todas las deudas y gastos fijos</span>
+    <span id="ver-todo-flecha">▾</span>
+  </div>
+
+  <div id="bloque-todo" style="display:none;">
+    <div class="grupo-titulo">TODAS LAS DEUDAS</div>
+    <div class="buscador-orden">
+      <input type="text" id="buscador" placeholder="Buscar por nombre..." oninput="setBusqueda(this.value)">
+      <select id="orden-select" onchange="setOrden(this.value)">
+        <option value="default">Más reciente</option>
+        <option value="mayor_saldo">Mayor saldo</option>
+        <option value="menor_saldo">Menor saldo</option>
+        <option value="proxima_fecha">Próxima cuota</option>
+        <option value="az">Nombre A-Z</option>
+      </select>
     </div>
-    <div id="ingreso-actualizado" style="font-size:10px; color:var(--text-dim); margin-top:10px;"></div>
-  </div>
+    <div class="filtros" id="filtros"></div>
+    <div id="lista-deudas"></div>
 
-  <div class="grupo-titulo">TODAS LAS DEUDAS</div>
-  <div class="buscador-orden">
-    <input type="text" id="buscador" placeholder="Buscar por nombre..." oninput="setBusqueda(this.value)">
-    <select id="orden-select" onchange="setOrden(this.value)">
-      <option value="default">Más reciente</option>
-      <option value="mayor_saldo">Mayor saldo</option>
-      <option value="menor_saldo">Menor saldo</option>
-      <option value="proxima_fecha">Próxima cuota</option>
-      <option value="az">Nombre A-Z</option>
-    </select>
+    <div class="grupo-titulo">GASTOS FIJOS <span id="gf-total" style="font-weight:400; color:var(--text-dim); font-size:11.5px;"></span></div>
+    <div id="lista-gastos-fijos"></div>
+    <button class="btn-outline btn-block" style="margin-top:2px;" onclick="abrirModalGastoFijo()">+ Añadir gasto fijo</button>
   </div>
-  <div class="filtros" id="filtros"></div>
-  <div id="lista-deudas"></div>
-
-  <div class="grupo-titulo">GASTOS FIJOS <span id="gf-total" style="font-weight:400; color:var(--text-dim); font-size:11.5px;"></span></div>
-  <div id="lista-gastos-fijos"></div>
-  <button class="btn-outline btn-block" style="margin-top:2px;" onclick="abrirModalGastoFijo()">+ Añadir gasto fijo</button>
 </div>
+
+<!-- MODAL: confirmación rápida de pago desde Próximo a pagar -->
+<div class="overlay" id="overlay-confirmar-pago">
+  <div class="sheet-confirm">
+    <div class="sheet-nombre" id="cf-nombre">—</div>
+    <div class="sheet-sub" id="cf-sub">—</div>
+    <div class="sheet-monto" id="cf-monto">— €</div>
+    <div class="sheet-pregunta">¿Ya has pagado esto?</div>
+    <button class="sheet-btn si" onclick="confirmarPagoRapido()">Sí, ya lo pagué</button>
+    <button class="sheet-btn no" onclick="cerrarConfirmarPago()">Todavía no</button>
+    <span class="sheet-link" onclick="verMasOpcionesDesdeConfirmar()">Ver más opciones (editar, importe distinto...) →</span>
+  </div>
+</div>
+
 
 <!-- ===== EVOLUCION ===== -->
 <div class="screen" id="s-evolucion">
@@ -776,13 +841,9 @@ async function sincronizarIngresoEstimado(manual){
 let ultimoIngresoConocido = null;
 
 function renderPanelIngreso(dataFresca, online){
-  const ingresoEl = document.getElementById('p-ingreso-estimado');
-  const disponibleEl = document.getElementById('p-disponible');
-  const cuotaGeneral2El = document.getElementById('p-cuota-general-2');
-  const gastosFijos2El = document.getElementById('p-gastos-fijos-2');
-  const actualizadoEl = document.getElementById('ingreso-actualizado');
-  const estadoEl = document.getElementById('ingreso-estado');
-  if(!ingresoEl) return;
+  const dispEl = document.getElementById('bento-disponible');
+  const dispSubEl = document.getElementById('bento-disponible-sub');
+  if(!dispEl) return;
 
   let data = dataFresca;
   let esCache = false;
@@ -799,31 +860,19 @@ function renderPanelIngreso(dataFresca, online){
 
   const cuotaGeneral = deudasActivas().filter(d=>d.direccion!=='me_deben').reduce((a,d)=>a+cuotaEfectiva(d),0);
   const gastosFijos = totalGastosFijos();
-  if(cuotaGeneral2El) cuotaGeneral2El.textContent = euros(cuotaGeneral);
-  if(gastosFijos2El) gastosFijos2El.textContent = euros(gastosFijos);
+  const comprometido = cuotaGeneral + gastosFijos;
 
   if(!data){
-    ingresoEl.textContent = '—';
-    if(disponibleEl) disponibleEl.textContent = '—';
-    if(actualizadoEl) actualizadoEl.textContent = cargarMatriculaGuardada()
-      ? 'Todavía no hay datos. Ve a Ajustes y pulsa "Sincronizar ahora".'
-      : 'Configura tu matrícula en Ajustes para ver esto.';
-    if(estadoEl) estadoEl.textContent = '';
+    dispEl.textContent = '—';
+    dispSubEl.textContent = cargarMatriculaGuardada()
+      ? 'Sin ingreso sincronizado · comprometido ' + euros(comprometido)
+      : 'Configura tu matrícula en Ajustes para ver esto';
     return;
   }
 
-  ingresoEl.textContent = euros(data.neto_estimado);
-  const disponible = data.neto_estimado - cuotaGeneral - gastosFijos;
-  if(disponibleEl){
-    disponibleEl.textContent = euros(disponible);
-    disponibleEl.style.color = disponible < 0 ? 'var(--red)' : 'var(--green)';
-  }
-  if(actualizadoEl){
-    const fecha = new Date(data.actualizado_en);
-    actualizadoEl.textContent = (esCache && !online ? 'Sin conexión · último dato: ' : 'Actualizado: ')
-      + fecha.toLocaleDateString('es-ES',{day:'2-digit',month:'short'}) + ' ' + fecha.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
-  }
-  if(estadoEl) estadoEl.textContent = '';
+  const disponible = data.neto_estimado - comprometido;
+  dispEl.textContent = euros(disponible);
+  dispSubEl.textContent = 'Ingreso ' + euros(data.neto_estimado) + ' · comprometido ' + euros(comprometido);
 }
 
 // Al abrir la app: mostrar lo último guardado al instante (funciona sin
@@ -1025,46 +1074,14 @@ function renderInicio(){
 
   const pendienteTotal = activasDebo.reduce((a,d)=>a+saldoActual(d),0);
   const meDebenTotal = activasMeDeben.reduce((a,d)=>a+saldoActual(d),0);
-  document.getElementById('w-pendiente').textContent = euros(pendienteTotal);
-  document.getElementById('w-me-deben').textContent = euros(meDebenTotal);
-  const neto = pendienteTotal - meDebenTotal;
-  const netoEl = document.getElementById('w-balance-neto');
-  netoEl.textContent = (neto>=0?'-':'+') + euros(Math.abs(neto));
-  netoEl.style.color = neto>0 ? 'var(--red)' : (neto<0 ? 'var(--green)' : 'var(--text)');
-
-  // proxima cuota: entre lo que TÚ debes con diaCobro, la mas cercana desde hoy
-  let proxima = null;
-  const ahora = hoy();
-  activasDebo.filter(d=>d.diaCobro).forEach(d=>{
-    let fechaProx = new Date(ahora.getFullYear(), ahora.getMonth(), d.diaCobro);
-    if(fechaProx < ahora) fechaProx = new Date(ahora.getFullYear(), ahora.getMonth()+1, d.diaCobro);
-    if(!proxima || fechaProx < proxima.fecha) proxima = {deuda:d, fecha:fechaProx};
-  });
-  if(proxima){
-    document.getElementById('w-proxima').textContent = euros(cuotaEfectiva(proxima.deuda)) + ' · ' + proxima.deuda.nombre;
-    document.getElementById('w-proxima-fecha').textContent = proxima.fecha.toLocaleDateString('es-ES',{day:'2-digit',month:'short'});
-  } else {
-    document.getElementById('w-proxima').textContent = '—';
-    document.getElementById('w-proxima-fecha').textContent = '';
-  }
-
-  const cuotaGeneral = activasDebo.reduce((a,d)=>a+cuotaEfectiva(d),0);
-  document.getElementById('p-cuota-general').textContent = euros(cuotaGeneral);
-  const desgloseEl = document.getElementById('p-desglose');
-  if(activasDebo.length===0){
-    desgloseEl.innerHTML = '<div style="font-size:12px; color:var(--text-dim);">Todavía no tienes deudas activas.</div>';
-  } else {
-    desgloseEl.innerHTML = activasDebo.map(d=>`
-      <div class="desglose-item">
-        <div class="izq"><div class="desglose-dot ${dotClase(d.tipo)}"></div><div class="desglose-nombre">${escapeHtml(d.nombre)}${(d.tipo==='tarjeta'&&d.modalidadPago==='completo')?' <span style="color:var(--text-dim); font-size:10.5px;">(pago completo)</span>':''}</div></div>
-        <div class="desglose-monto">${euros(cuotaEfectiva(d))}</div>
-      </div>`).join('');
-  }
+  document.getElementById('bento-debes').textContent = euros(pendienteTotal);
+  document.getElementById('bento-me-deben').textContent = euros(meDebenTotal);
 
   renderFiltros();
   renderListaDeudas();
   renderGastosFijos();
   renderPanelIngreso(null, true);
+  renderProximosAPagar();
 }
 
 function renderFiltros(){
@@ -1512,6 +1529,173 @@ function eliminarGastoFijo(){
     cerrarOpcionesGF();
     renderInicio();
   }
+}
+
+/* ================== PRÓXIMO A PAGAR (lista unificada) ================== */
+function diasHastaDia(dia){
+  // devuelve cuántos días faltan (negativo = ya pasó) para el próximo "dia" del mes
+  const ahora = hoy();
+  const hoyD = ahora.getDate();
+  return dia - hoyD;
+}
+function yaPagadoEsteMesDeuda(d){
+  if(saldoActual(d) <= 0) return true; // saldada del todo, no hay nada que pagar
+  if(!d.diaCobro) return false; // sin fecha fija (ej. tarjeta pago completo con saldo pendiente): siempre visible
+  const inicioMes = new Date(hoy().getFullYear(), hoy().getMonth(), 1);
+  return d.movimientos.some(m=>m.tipo==='abono' && new Date(m.fecha) >= inicioMes);
+}
+function construirListaProximos(){
+  const pendientes = [];
+  const pagados = [];
+
+  deudasActivas().filter(d=>d.direccion!=='me_deben').forEach(d=>{
+    const monto = cuotaEfectiva(d);
+    if(monto<=0) return; // nada que pagar (saldada)
+    const item = {
+      tipo:'deuda', id:d.id, nombre:d.nombre,
+      subtitulo: tagLabel(d.tipo) + (d.diaCobro ? ' · ' + textoDias(diasHastaDia(d.diaCobro)) : ' · sin fecha fija'),
+      monto, dias: d.diaCobro ? diasHastaDia(d.diaCobro) : null,
+      color: 'var(--violet, var(--blue))'
+    };
+    if(yaPagadoEsteMesDeuda(d)){
+      pagados.push({...item, subtitulo: tagLabel(d.tipo) + ' · pagado este mes'});
+    } else {
+      pendientes.push(item);
+    }
+  });
+
+  estado.gastosFijos.filter(g=>g.activo).forEach(g=>{
+    const item = {
+      tipo:'gasto', id:g.id, nombre: catIconoGF(g.categoria)+' '+g.nombre,
+      subtitulo: 'Gasto fijo' + (g.diaPago ? ' · ' + textoDias(diasHastaDia(g.diaPago)) : ''),
+      monto: g.importeMensual, dias: g.diaPago ? diasHastaDia(g.diaPago) : null,
+      color: 'var(--amber)'
+    };
+    if(gastoFijoPagadoEsteMes(g)){
+      pagados.push({...item, subtitulo:'Gasto fijo · pagado este mes'});
+    } else {
+      pendientes.push(item);
+    }
+  });
+
+  pendientes.sort((a,b)=>{
+    if(a.dias===null && b.dias===null) return 0;
+    if(a.dias===null) return 1;
+    if(b.dias===null) return -1;
+    return a.dias - b.dias;
+  });
+
+  return {pendientes, pagados};
+}
+function textoDias(dias){
+  if(dias===0) return 'vence hoy';
+  if(dias<0) return 'vencida hace ' + Math.abs(dias) + (Math.abs(dias)===1?' día':' días');
+  return 'vence en ' + dias + (dias===1?' día':' días');
+}
+
+function renderProximosAPagar(){
+  const {pendientes, pagados} = construirListaProximos();
+
+  const contadorEl = document.getElementById('prox-contador');
+  contadorEl.textContent = pendientes.length ? pendientes.length + (pendientes.length===1?' pendiente':' pendientes') : '';
+
+  const cont = document.getElementById('lista-proximos');
+  const emptyEl = document.getElementById('prox-empty');
+  if(pendientes.length===0){
+    cont.innerHTML = '';
+    emptyEl.classList.add('show');
+  } else {
+    emptyEl.classList.remove('show');
+    cont.innerHTML = pendientes.map(it=>`
+      <div class="prox-fila" data-tipo="${it.tipo}" data-id="${it.id}" onclick="abrirConfirmarPago('${it.tipo}','${it.id}')">
+        <div class="prox-bar" style="background:${it.color};"></div>
+        <div class="prox-info">
+          <div class="prox-nom">${escapeHtml(it.nombre)}</div>
+          <div class="prox-sub" style="${it.dias!==null && it.dias<0 ? 'color:var(--red);' : ''}">${it.subtitulo}</div>
+        </div>
+        <div class="prox-monto">${euros(it.monto)}</div>
+      </div>`).join('');
+  }
+
+  const tituloPagado = document.getElementById('plegable-pagado-titulo');
+  const listaPagado = document.getElementById('plegable-pagado-lista');
+  if(tituloPagado) tituloPagado.textContent = '✓ Pagado este mes (' + pagados.length + ')';
+  if(listaPagado){
+    listaPagado.innerHTML = pagados.length
+      ? pagados.map(it=>`<div class="plegable-item"><span>${escapeHtml(it.nombre)}</span><b>${euros(it.monto)}</b></div>`).join('')
+      : '<div class="plegable-item"><span>Nada marcado como pagado todavía este mes.</span></div>';
+  }
+}
+
+let plegablePagadoAbierto = false;
+function togglePlegablePagado(){
+  plegablePagadoAbierto = !plegablePagadoAbierto;
+  document.getElementById('plegable-pagado-lista').classList.toggle('abierto', plegablePagadoAbierto);
+  document.getElementById('plegable-pagado-flecha').textContent = plegablePagadoAbierto ? '▴' : '▾';
+}
+
+let verTodoAbierto = false;
+function toggleVerTodo(){
+  verTodoAbierto = !verTodoAbierto;
+  document.getElementById('bloque-todo').style.display = verTodoAbierto ? '' : 'none';
+  document.getElementById('ver-todo-flecha').textContent = verTodoAbierto ? '▴' : '▾';
+  document.getElementById('ver-todo-txt').textContent = verTodoAbierto ? 'Ocultar todas las deudas y gastos fijos' : 'Ver todas las deudas y gastos fijos';
+}
+
+/* ---- Sheet de confirmación de pago rápido ---- */
+let confirmarPagoActual = null; // {tipo, id}
+function abrirConfirmarPago(tipo, id){
+  confirmarPagoActual = {tipo, id};
+  let nombre, subtitulo, monto;
+  if(tipo==='deuda'){
+    const d = estado.deudas.find(x=>x.id===id);
+    nombre = d.nombre;
+    subtitulo = tagLabel(d.tipo) + (d.diaCobro ? ' · ' + textoDias(diasHastaDia(d.diaCobro)) : '');
+    monto = cuotaEfectiva(d);
+  } else {
+    const g = estado.gastosFijos.find(x=>x.id===id);
+    nombre = g.nombre;
+    subtitulo = catLabelGF(g.categoria) + (g.diaPago ? ' · día ' + g.diaPago : '');
+    monto = g.importeMensual;
+  }
+  document.getElementById('cf-nombre').textContent = nombre;
+  document.getElementById('cf-sub').textContent = subtitulo;
+  document.getElementById('cf-monto').textContent = euros(monto);
+  document.getElementById('overlay-confirmar-pago').classList.add('active');
+  history.pushState({tipo:'modal'}, '');
+}
+function cerrarConfirmarPago(){
+  document.getElementById('overlay-confirmar-pago').classList.remove('active');
+}
+function confirmarPagoRapido(){
+  if(!confirmarPagoActual) return;
+  const {tipo, id} = confirmarPagoActual;
+  cerrarConfirmarPago();
+
+  const filaEl = document.querySelector(`.prox-fila[data-tipo="${tipo}"][data-id="${id}"]`);
+  if(filaEl) filaEl.classList.add('saliendo');
+
+  const aplicar = ()=>{
+    if(tipo==='deuda'){
+      const d = estado.deudas.find(x=>x.id===id);
+      d.movimientos.push({ id: uid(), tipo:'abono', monto: cuotaEfectiva(d), fecha: new Date().toISOString().slice(0,10), nota:'Pago rápido desde Inicio' });
+    } else {
+      const g = estado.gastosFijos.find(x=>x.id===id);
+      const mes = mesActualStr();
+      if(!g.pagosRealizados.includes(mes)) g.pagosRealizados.push(mes);
+    }
+    guardarDatos();
+    renderInicio();
+  };
+
+  if(filaEl){ setTimeout(aplicar, 380); } else { aplicar(); }
+}
+function verMasOpcionesDesdeConfirmar(){
+  if(!confirmarPagoActual) return;
+  const {tipo, id} = confirmarPagoActual;
+  cerrarConfirmarPago();
+  if(tipo==='deuda') abrirOpciones(id);
+  else abrirOpcionesGF(id);
 }
 
 /* ================== EVOLUCION ================== */
