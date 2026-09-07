@@ -144,6 +144,21 @@
   .track-fill{height:100%; border-radius:6px;}
   .row-meta{display:flex; justify-content:space-between; font-size:10.5px; color:var(--text-dim); margin-top:8px; font-weight:500;}
   .empty{text-align:center; color:var(--text-dim); font-size:13.5px; padding:40px 14px; line-height:1.6; font-weight:500;}
+
+  .gf-row{
+    background:var(--panel); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border:1px solid var(--line); border-radius:16px; padding:13px 15px; margin-bottom:9px;
+    display:flex; align-items:center; gap:12px; cursor:pointer;
+  }
+  .gf-check{
+    width:24px; height:24px; border-radius:50%; border:2px solid var(--line); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:13px; color:transparent;
+  }
+  .gf-check.on{background:var(--green); border-color:var(--green); color:#fff;}
+  .gf-info{flex:1; min-width:0;}
+  .gf-nombre{font-size:14.5px; font-weight:700;}
+  .gf-meta{font-size:11px; color:var(--text-dim); margin-top:2px;}
+  .gf-monto{font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:700; white-space:nowrap;}
   .empty button{margin-top:14px;}
 
   .btn{
@@ -282,7 +297,8 @@
     <div class="panel-label">INGRESO ESTIMADO (TrenTurnos) <span id="ingreso-estado" style="font-weight:400;"></span></div>
     <div class="panel-num" id="p-ingreso-estimado" style="color:var(--green);">—</div>
     <div class="subrow">
-      <div><div class="n" id="p-cuota-general-2">0 €</div><div class="l">cuota general</div></div>
+      <div><div class="n" id="p-cuota-general-2">0 €</div><div class="l">cuota deudas</div></div>
+      <div><div class="n" id="p-gastos-fijos-2">0 €</div><div class="l">gastos fijos</div></div>
       <div><div class="n" id="p-disponible">—</div><div class="l">te queda disponible</div></div>
     </div>
     <div id="ingreso-actualizado" style="font-size:10px; color:var(--text-dim); margin-top:10px;"></div>
@@ -301,6 +317,10 @@
   </div>
   <div class="filtros" id="filtros"></div>
   <div id="lista-deudas"></div>
+
+  <div class="grupo-titulo">GASTOS FIJOS <span id="gf-total" style="font-weight:400; color:var(--text-dim); font-size:11.5px;"></span></div>
+  <div id="lista-gastos-fijos"></div>
+  <button class="btn-outline btn-block" style="margin-top:2px;" onclick="abrirModalGastoFijo()">+ Añadir gasto fijo</button>
 </div>
 
 <!-- ===== EVOLUCION ===== -->
@@ -539,6 +559,54 @@
   </div>
 </div>
 
+<!-- MODAL: nuevo/editar gasto fijo -->
+<div class="overlay" id="overlay-gasto-fijo">
+  <div class="modal">
+    <h2 id="titulo-modal-gf">Nuevo gasto fijo</h2>
+    <div class="field">
+      <label>Nombre</label>
+      <input type="text" id="gf-nombre" placeholder="Ej: Arriendo, Teléfono, Internet...">
+    </div>
+    <div class="field">
+      <label>Categoría</label>
+      <div class="tipo-select" style="flex-wrap:wrap;">
+        <div class="tipo-opt on" data-cat="vivienda" onclick="seleccionarCategoriaGF(this)">🏠 Vivienda</div>
+        <div class="tipo-opt" data-cat="servicios" onclick="seleccionarCategoriaGF(this)">💡 Servicios</div>
+        <div class="tipo-opt" data-cat="suscripciones" onclick="seleccionarCategoriaGF(this)">📱 Suscripciones</div>
+        <div class="tipo-opt" data-cat="seguros" onclick="seleccionarCategoriaGF(this)">🛡️ Seguros</div>
+        <div class="tipo-opt" data-cat="otro" onclick="seleccionarCategoriaGF(this)">Otro</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Importe mensual (€)</label>
+        <input type="number" id="gf-monto" placeholder="0">
+      </div>
+      <div class="field">
+        <label>Día de pago (1-31)</label>
+        <input type="number" id="gf-dia" min="1" max="31" placeholder="Ej: 5">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="cerrarModalGastoFijo()">Cancelar</button>
+      <button class="btn" onclick="guardarGastoFijo()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: opciones de un gasto fijo -->
+<div class="overlay" id="overlay-opciones-gf">
+  <div class="modal">
+    <h2 id="op-gf-nombre">Gasto fijo</h2>
+    <div class="modal-actions" style="flex-direction:column;">
+      <button class="btn btn-block" id="op-gf-marcar-btn" onclick="toggleGastoFijoPagado()">Marcar como pagado este mes</button>
+      <button class="btn-outline btn-block" onclick="irAEditarGastoFijo()">Editar</button>
+      <button class="btn-danger btn-block" onclick="eliminarGastoFijo()">Eliminar</button>
+      <button class="btn-outline btn-block" onclick="cerrarOpcionesGF()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: editar/eliminar movimiento -->
 <div class="overlay" id="overlay-editar-mov">
   <div class="modal">
@@ -592,7 +660,7 @@ function cargarDatos(){
     const raw = localStorage.getItem(STORAGE_KEY);
     if(raw) return JSON.parse(raw);
   }catch(e){ console.error('Error leyendo datos', e); }
-  return { deudas: [] };
+  return { deudas: [], gastosFijos: [] };
 }
 function guardarDatos(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
@@ -602,6 +670,12 @@ let estado = cargarDatos();
 
 function migrarDatos(){
   let cambiado = false;
+  if(!estado.gastosFijos){ estado.gastosFijos = []; cambiado = true; }
+  estado.gastosFijos.forEach(g=>{
+    if(!g.pagosRealizados){ g.pagosRealizados = []; cambiado = true; }
+    if(!g.categoria){ g.categoria = 'otro'; cambiado = true; }
+    if(g.activo===undefined){ g.activo = true; cambiado = true; }
+  });
   estado.deudas.forEach(d=>{
     if(!d.movimientos) { d.movimientos = []; cambiado = true; }
     let origenMov = d.movimientos.find(m=>m.tipo==='origen');
@@ -705,6 +779,7 @@ function renderPanelIngreso(dataFresca, online){
   const ingresoEl = document.getElementById('p-ingreso-estimado');
   const disponibleEl = document.getElementById('p-disponible');
   const cuotaGeneral2El = document.getElementById('p-cuota-general-2');
+  const gastosFijos2El = document.getElementById('p-gastos-fijos-2');
   const actualizadoEl = document.getElementById('ingreso-actualizado');
   const estadoEl = document.getElementById('ingreso-estado');
   if(!ingresoEl) return;
@@ -723,7 +798,9 @@ function renderPanelIngreso(dataFresca, online){
   if(data) ultimoIngresoConocido = data;
 
   const cuotaGeneral = deudasActivas().filter(d=>d.direccion!=='me_deben').reduce((a,d)=>a+cuotaEfectiva(d),0);
+  const gastosFijos = totalGastosFijos();
   if(cuotaGeneral2El) cuotaGeneral2El.textContent = euros(cuotaGeneral);
+  if(gastosFijos2El) gastosFijos2El.textContent = euros(gastosFijos);
 
   if(!data){
     ingresoEl.textContent = '—';
@@ -736,7 +813,7 @@ function renderPanelIngreso(dataFresca, online){
   }
 
   ingresoEl.textContent = euros(data.neto_estimado);
-  const disponible = data.neto_estimado - cuotaGeneral;
+  const disponible = data.neto_estimado - cuotaGeneral - gastosFijos;
   if(disponibleEl){
     disponibleEl.textContent = euros(disponible);
     disponibleEl.style.color = disponible < 0 ? 'var(--red)' : 'var(--green)';
@@ -986,6 +1063,7 @@ function renderInicio(){
 
   renderFiltros();
   renderListaDeudas();
+  renderGastosFijos();
   renderPanelIngreso(null, true);
 }
 
@@ -1309,6 +1387,131 @@ function guardarCompra(){
   guardarDatos();
   cerrarModalCompra();
   renderInicio();
+}
+
+/* ================== GASTOS FIJOS ================== */
+function mesActualStr(){
+  const h = hoy();
+  return h.getFullYear()+'-'+String(h.getMonth()+1).padStart(2,'0');
+}
+function gastoFijoPagadoEsteMes(g){
+  return g.pagosRealizados.includes(mesActualStr());
+}
+function catIconoGF(cat){
+  return {vivienda:'🏠', servicios:'💡', suscripciones:'📱', seguros:'🛡️'}[cat] || '📌';
+}
+function catLabelGF(cat){
+  return {vivienda:'Vivienda', servicios:'Servicios', suscripciones:'Suscripciones', seguros:'Seguros'}[cat] || 'Otro';
+}
+function totalGastosFijos(){
+  return estado.gastosFijos.filter(g=>g.activo).reduce((a,g)=>a+(g.importeMensual||0),0);
+}
+function renderGastosFijos(){
+  const totalEl = document.getElementById('gf-total');
+  const activos = estado.gastosFijos.filter(g=>g.activo);
+  if(totalEl) totalEl.textContent = activos.length ? ('· ' + euros(totalGastosFijos()) + '/mes') : '';
+
+  const cont = document.getElementById('lista-gastos-fijos');
+  if(!cont) return;
+  if(activos.length===0){
+    cont.innerHTML = `<div class="empty">Sin gastos fijos añadidos. Arriendo, teléfono, internet, suscripciones...</div>`;
+    return;
+  }
+  cont.innerHTML = activos.map(g=>{
+    const pagado = gastoFijoPagadoEsteMes(g);
+    return `
+    <div class="gf-row" onclick="abrirOpcionesGF('${g.id}')">
+      <div class="gf-check ${pagado?'on':''}">${pagado?'✓':''}</div>
+      <div class="gf-info">
+        <div class="gf-nombre">${catIconoGF(g.categoria)} ${escapeHtml(g.nombre)}</div>
+        <div class="gf-meta">${catLabelGF(g.categoria)}${g.diaPago?' · día '+g.diaPago:''}${pagado?' · pagado este mes':' · pendiente este mes'}</div>
+      </div>
+      <div class="gf-monto" style="${pagado?'color:var(--green);':''}">${euros(g.importeMensual)}</div>
+    </div>`;
+  }).join('');
+}
+
+let catNuevoGF = 'vivienda';
+let editandoGastoFijoId = null;
+let gastoFijoSeleccionado = null;
+
+function abrirModalGastoFijo(idAEditar){
+  editandoGastoFijoId = idAEditar || null;
+  const g = editandoGastoFijoId ? estado.gastosFijos.find(x=>x.id===editandoGastoFijoId) : null;
+  document.getElementById('titulo-modal-gf').textContent = g ? 'Editar gasto fijo' : 'Nuevo gasto fijo';
+  document.getElementById('gf-nombre').value = g ? g.nombre : '';
+  document.getElementById('gf-monto').value = g ? g.importeMensual : '';
+  document.getElementById('gf-dia').value = g ? (g.diaPago||'') : '';
+  catNuevoGF = g ? g.categoria : 'vivienda';
+  document.querySelectorAll('.tipo-opt[data-cat]').forEach(o=>o.classList.toggle('on', o.dataset.cat===catNuevoGF));
+  document.getElementById('overlay-gasto-fijo').classList.add('active');
+  history.pushState({tipo:'modal'}, '');
+}
+function cerrarModalGastoFijo(){
+  document.getElementById('overlay-gasto-fijo').classList.remove('active');
+  editandoGastoFijoId = null;
+}
+function seleccionarCategoriaGF(el){
+  document.querySelectorAll('.tipo-opt[data-cat]').forEach(o=>o.classList.remove('on'));
+  el.classList.add('on');
+  catNuevoGF = el.dataset.cat;
+}
+function guardarGastoFijo(){
+  const nombre = document.getElementById('gf-nombre').value.trim();
+  const monto = parseFloat(document.getElementById('gf-monto').value);
+  const dia = parseInt(document.getElementById('gf-dia').value) || null;
+  if(!nombre || !monto || monto<=0){
+    alert('Pon un nombre y un importe válido.');
+    return;
+  }
+  if(editandoGastoFijoId){
+    const g = estado.gastosFijos.find(x=>x.id===editandoGastoFijoId);
+    g.nombre = nombre; g.importeMensual = monto; g.diaPago = dia; g.categoria = catNuevoGF;
+  } else {
+    estado.gastosFijos.push({
+      id: uid(), nombre, categoria: catNuevoGF, importeMensual: monto, diaPago: dia,
+      activo: true, pagosRealizados: []
+    });
+  }
+  guardarDatos();
+  cerrarModalGastoFijo();
+  renderInicio();
+}
+function abrirOpcionesGF(id){
+  gastoFijoSeleccionado = id;
+  const g = estado.gastosFijos.find(x=>x.id===id);
+  document.getElementById('op-gf-nombre').textContent = g.nombre;
+  document.getElementById('op-gf-marcar-btn').textContent = gastoFijoPagadoEsteMes(g)
+    ? 'Marcar como pendiente este mes' : 'Marcar como pagado este mes';
+  document.getElementById('overlay-opciones-gf').classList.add('active');
+  history.pushState({tipo:'modal'}, '');
+}
+function cerrarOpcionesGF(){
+  document.getElementById('overlay-opciones-gf').classList.remove('active');
+}
+function toggleGastoFijoPagado(){
+  const g = estado.gastosFijos.find(x=>x.id===gastoFijoSeleccionado);
+  const mes = mesActualStr();
+  if(g.pagosRealizados.includes(mes)){
+    g.pagosRealizados = g.pagosRealizados.filter(m=>m!==mes);
+  } else {
+    g.pagosRealizados.push(mes);
+  }
+  guardarDatos();
+  cerrarOpcionesGF();
+  renderInicio();
+}
+function irAEditarGastoFijo(){
+  cerrarOpcionesGF();
+  abrirModalGastoFijo(gastoFijoSeleccionado);
+}
+function eliminarGastoFijo(){
+  if(confirm('¿Eliminar este gasto fijo? Se borrará también su historial de pagos marcados.')){
+    estado.gastosFijos = estado.gastosFijos.filter(x=>x.id!==gastoFijoSeleccionado);
+    guardarDatos();
+    cerrarOpcionesGF();
+    renderInicio();
+  }
 }
 
 /* ================== EVOLUCION ================== */
